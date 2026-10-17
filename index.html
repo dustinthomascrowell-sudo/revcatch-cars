@@ -1,0 +1,335 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#121518"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="RevCatch Cars">
+<link rel="manifest" href="/manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>RevCatch Cars Home</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: one phone-width column, stacked bands; works full-bleed on desktop but designed for thumbs */
+:root{--bg:#121518;--panel:#1b1f24;--line:#2c323a;--fg:#eef2f5;--mute:#8b95a1;--silver:#c3cad3;--accent:#3ec6ff;
+--common:#9aa4b1;--rare:#3fa2ff;--epic:#b06bff;--legend:#ffb21e;
+--display:"Chakra Petch",system-ui,sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;color-scheme:dark}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:520px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));padding-block:0}
+section{padding-block:36px;border-bottom:1px solid var(--line)}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+h1{font-size:clamp(34px,10.5vw,52px);line-height:1.04;letter-spacing:.04em}h1 em{font-style:normal;color:var(--accent)}h1 .dim{color:var(--silver)}
+h2{font-size:28px;margin-bottom:16px}
+p{margin:0;color:var(--silver)}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.top{display:flex;justify-content:space-between;align-items:center;padding-block:16px}
+.logo{display:flex;align-items:center;gap:8px}.logo img{height:26px;width:auto}.logo span{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:.18em;color:var(--silver)}
+.hero{position:relative;padding-top:20px;display:grid;gap:18px}
+.hero-car{width:100%;height:auto;display:block;max-width:100%}
+.carfig{margin:0;display:grid;gap:6px}.carfig.mid{padding-block:28px;border-bottom:1px solid var(--line)}
+.carfig figcaption{font-family:var(--mono);font-size:12px;color:var(--mute);text-align:center;letter-spacing:.06em}.carfig figcaption span{color:var(--legend);text-transform:uppercase}
+.btn{display:block;text-align:center;text-decoration:none;font-family:var(--display);font-weight:700;font-size:18px;padding:16px;border-radius:12px;border:0;cursor:pointer;width:100%;box-sizing:border-box}
+.btn.pri{background:var(--accent);color:#06121a}.btn.sec{background:none;color:var(--fg);border:1px solid var(--line)}
+.btn:focus-visible{outline:2px solid var(--fg);outline-offset:3px}
+.steps{display:grid;gap:18px}
+.step{display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start}
+.step b{font-family:var(--mono);font-size:22px;color:var(--accent)}
+.step h3{font-size:20px;margin-bottom:2px}
+.tiers{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tier{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;gap:4px}
+.tier .pt{font-family:var(--mono);font-size:20px}.tier small{color:var(--mute);font-size:13px}
+.most{display:grid;gap:0}.most div{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--line)}
+.most span:last-child{font-family:var(--mono);color:var(--legend);font-size:13px}
+.os{display:grid;gap:12px}.os .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px}
+.os ol{margin:8px 0 0;padding-left:20px;color:var(--silver);display:grid;gap:4px}
+.rw{display:grid;gap:10px}.rw div{display:flex;justify-content:space-between;gap:10px}
+.rw span:last-child{font-family:var(--mono);color:var(--accent)}
+.safe{background:var(--panel);border-left:3px solid var(--legend);padding:14px;border-radius:0 10px 10px 0;color:var(--silver);font-size:15px}
+footer{padding-block:28px;display:grid;gap:10px;color:var(--mute);font-size:13px}
+footer nav{display:flex;gap:16px;flex-wrap:wrap}footer a{color:var(--silver)}
+.sticky{position:sticky;bottom:0;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px));padding-top:12px;background:linear-gradient(transparent,var(--bg) 35%)}
+#toast{font-size:13px;color:var(--accent);text-align:center;min-height:18px;margin-top:6px}
+</style>
+<div class="wrap">
+<div class="top"><div class="logo"><img alt="RevCatch" data-logo src=""><span>CARS</span></div><span class="lbl">Free · Beta</span></div>
+
+<section class="hero" style="border:0">
+  <span class="lbl">The car-spotting game</span>
+  <h1><span class="dim">Spot it...</span><br><span class="dim">Snap it...</span><br><em>Catch it!!!</em></h1>
+  <p>370 cars and counting, from Mustangs to the Wienermobile. Snap one, get it verified, earn points. Build your garage, beat your crew, and cash points in for free gear.</p>
+  <figure class="carfig"><svg class="hero-car" viewBox="0 0 600 360" role="img" aria-label="Blue R34 GT-R, rear view">
+<defs>
+ <linearGradient id="rb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6fdcff"/><stop offset=".45" stop-color="#2a9bea"/><stop offset="1" stop-color="#0e4f96"/></linearGradient>
+ <linearGradient id="rbs" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0c3f78"/><stop offset=".18" stop-color="#2a9bea"/><stop offset=".5" stop-color="#58cfff"/><stop offset=".82" stop-color="#2a9bea"/><stop offset="1" stop-color="#0c3f78"/></linearGradient>
+ <linearGradient id="rg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a4b5c"/><stop offset="1" stop-color="#0a1016"/></linearGradient>
+ <radialGradient id="tl" cx=".42" cy=".38" r=".6"><stop offset="0" stop-color="#ffb08a"/><stop offset=".35" stop-color="#ff3a2a"/><stop offset="1" stop-color="#7a0b0b"/></radialGradient>
+ <radialGradient id="ti" cx=".42" cy=".38" r=".6"><stop offset="0" stop-color="#ffe0a0"/><stop offset=".4" stop-color="#ff8a1e"/><stop offset="1" stop-color="#9a2a06"/></radialGradient>
+ <radialGradient id="sh" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".55"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+ <radialGradient id="gl" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#3ec6ff" stop-opacity=".28"/><stop offset="1" stop-color="#3ec6ff" stop-opacity="0"/></radialGradient>
+</defs>
+<ellipse cx="300" cy="318" rx="290" ry="40" fill="url(#gl)"/>
+<ellipse cx="300" cy="312" rx="250" ry="16" fill="url(#sh)"/>
+<!-- tires -->
+<g><clipPath id="cr1"><rect x="52" y="232" width="94" height="90" rx="10"/></clipPath><rect x="52" y="232" width="94" height="90" rx="10" fill="#15191e"/><g clip-path="url(#cr1)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M57 228 Q82.08 222 96.0 211"/><path d="M141 228 Q115.92 222 102.0 211"/><path d="M57 243 Q82.08 237 96.0 226"/><path d="M141 243 Q115.92 237 102.0 226"/><path d="M57 258 Q82.08 252 96.0 241"/><path d="M141 258 Q115.92 252 102.0 241"/><path d="M57 273 Q82.08 267 96.0 256"/><path d="M141 273 Q115.92 267 102.0 256"/><path d="M57 288 Q82.08 282 96.0 271"/><path d="M141 288 Q115.92 282 102.0 271"/><path d="M57 303 Q82.08 297 96.0 286"/><path d="M141 303 Q115.92 297 102.0 286"/><path d="M57 318 Q82.08 312 96.0 301"/><path d="M141 318 Q115.92 312 102.0 301"/><path d="M57 333 Q82.08 327 96.0 316"/><path d="M141 333 Q115.92 327 102.0 316"/><path d="M57 348 Q82.08 342 96.0 331"/><path d="M141 348 Q115.92 342 102.0 331"/></g><rect x="52" y="232" width="94" height="90" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="54" y="234" width="6" height="86" rx="3" fill="#fff" opacity=".05"/></g><g><clipPath id="cr2"><rect x="454" y="232" width="94" height="90" rx="10"/></clipPath><rect x="454" y="232" width="94" height="90" rx="10" fill="#15191e"/><g clip-path="url(#cr2)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M459 228 Q484.08 222 498.0 211"/><path d="M543 228 Q517.92 222 504.0 211"/><path d="M459 243 Q484.08 237 498.0 226"/><path d="M543 243 Q517.92 237 504.0 226"/><path d="M459 258 Q484.08 252 498.0 241"/><path d="M543 258 Q517.92 252 504.0 241"/><path d="M459 273 Q484.08 267 498.0 256"/><path d="M543 273 Q517.92 267 504.0 256"/><path d="M459 288 Q484.08 282 498.0 271"/><path d="M543 288 Q517.92 282 504.0 271"/><path d="M459 303 Q484.08 297 498.0 286"/><path d="M543 303 Q517.92 297 504.0 286"/><path d="M459 318 Q484.08 312 498.0 301"/><path d="M543 318 Q517.92 312 504.0 301"/><path d="M459 333 Q484.08 327 498.0 316"/><path d="M543 333 Q517.92 327 504.0 316"/><path d="M459 348 Q484.08 342 498.0 331"/><path d="M543 348 Q517.92 342 504.0 331"/></g><rect x="454" y="232" width="94" height="90" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="456" y="234" width="6" height="86" rx="3" fill="#fff" opacity=".05"/></g>
+
+<!-- cabin -->
+<path d="M178 132 L206 66 Q212 56 226 55 L374 55 Q388 56 394 66 L422 132 Z" fill="url(#rb)" stroke="#a9ecff" stroke-width="1.2"/>
+<path d="M196 128 L218 72 Q222 66 232 66 L368 66 Q378 66 382 72 L404 128 Z" fill="url(#rg)"/>
+<path d="M230 72 L262 72 L232 120 L214 120 Z" fill="#fff" opacity=".07"/>
+<!-- mirrors -->
+<path d="M150 118 L176 112 L178 128 L156 132 Z" fill="#1f86d6" stroke="#a9ecff" stroke-width="1"/><path d="M450 118 L424 112 L422 128 L444 132 Z" fill="#1f86d6" stroke="#a9ecff" stroke-width="1"/>
+<!-- main rear body / fenders -->
+<path d="M70 168 Q72 140 118 134 L482 134 Q528 140 530 168 L538 240 Q538 252 526 254 L74 254 Q62 252 62 240 Z" fill="url(#rbs)" stroke="#a9ecff" stroke-width="1.2"/>
+<!-- trunk lid line -->
+<path d="M120 140 L480 140" stroke="#bff2ff" stroke-opacity=".7" stroke-width="2"/>
+<path d="M232 146 L232 206 M368 146 L368 206" stroke="#0c3f78" stroke-width="1.5" opacity=".7"/>
+<!-- tail light pods -->
+<path d="M86 152 Q88 144 98 144 L232 144 L232 208 L92 208 Q84 206 84 196 Z" fill="#0d4a8c" opacity=".55"/>
+<path d="M514 152 Q512 144 502 144 L368 144 L368 208 L508 208 Q516 206 516 196 Z" fill="#0d4a8c" opacity=".55"/>
+<!-- four round lights -->
+<g stroke="#0a1016" stroke-width="3">
+ <circle cx="128" cy="176" r="29" fill="url(#tl)"/><circle cx="194" cy="176" r="25" fill="url(#ti)"/>
+ <circle cx="472" cy="176" r="29" fill="url(#tl)"/><circle cx="406" cy="176" r="25" fill="url(#ti)"/>
+</g>
+<g fill="none" stroke="#ffd0b0" stroke-opacity=".55" stroke-width="2"><circle cx="128" cy="176" r="17"/><circle cx="472" cy="176" r="17"/><circle cx="194" cy="176" r="13"/><circle cx="406" cy="176" r="13"/></g>
+<g fill="#fff" opacity=".55"><ellipse cx="119" cy="166" rx="7" ry="4"/><ellipse cx="463" cy="166" rx="7" ry="4"/><ellipse cx="187" cy="167" rx="6" ry="3.5"/><ellipse cx="399" cy="167" rx="6" ry="3.5"/></g>
+<!-- third brake light -->
+<rect x="276" y="122" width="48" height="7" rx="2" fill="#ff3a2a"/>
+<!-- wing -->
+<rect x="176" y="114" width="12" height="28" rx="3" fill="#1f86d6" stroke="#a9ecff" stroke-width="1"/><rect x="412" y="114" width="12" height="28" rx="3" fill="#1f86d6" stroke="#a9ecff" stroke-width="1"/>
+<path d="M120 104 L480 104 Q492 104 492 112 L492 116 L108 116 L108 112 Q108 104 120 104 Z" fill="#11161c" stroke="#3ec6ff" stroke-width="1.2"/>
+<path d="M100 100 L116 100 L118 122 L102 124 Z" fill="#1f86d6" stroke="#a9ecff" stroke-width="1"/><path d="M500 100 L484 100 L482 122 L498 124 Z" fill="#1f86d6" stroke="#a9ecff" stroke-width="1"/>
+<!-- bumper -->
+<path d="M66 214 L534 214 L536 246 Q536 254 526 256 L74 256 Q64 254 64 246 Z" fill="#1d7fd0" stroke="#a9ecff" stroke-width="1"/>
+<rect x="190" y="222" width="40" height="13" rx="2" fill="#e8eef3" opacity=".85"/><rect x="370" y="222" width="40" height="13" rx="2" fill="#c42a22"/>
+<!-- plate recess -->
+<rect x="248" y="216" width="104" height="34" rx="4" fill="#0e4f96" stroke="#0a3566"/><rect x="258" y="222" width="84" height="22" rx="2" fill="#e8eef3"/><text x="300" y="239" text-anchor="middle" font-family="Chakra Petch,Arial,sans-serif" font-weight="700" font-size="17" fill="#0e4f96" letter-spacing="2">R34</text>
+<!-- diffuser + exhaust -->
+<path d="M96 256 L504 256 L490 286 L110 286 Z" fill="#0b0f14"/>
+<g stroke="#232b34" stroke-width="3"><line x1="200" y1="258" x2="194" y2="284"/><line x1="250" y1="258" x2="248" y2="284"/><line x1="350" y1="258" x2="352" y2="284"/><line x1="400" y1="258" x2="406" y2="284"/></g>
+<ellipse cx="438" cy="268" rx="20" ry="14" fill="#2a2f35" stroke="#c9a46a" stroke-width="3"/><ellipse cx="438" cy="268" rx="12" ry="8" fill="#050607"/>
+</svg>
+
+
+<figcaption><span>Legendary</span> R34 Skyline GT-R V-Spec · 2,500 pts</figcaption></figure>
+  <a class="btn pri" href="/app/">Start catching. It's free</a>
+  <button class="btn sec" id="share">Text this to a friend</button>
+  <div id="toast"></div>
+</section>
+
+<section>
+  <h2>How it works</h2>
+  <div class="steps">
+    <div class="step"><b>01</b><div><h3>Spot</h3><p>See something rare on the street, at a show, or at Cars &amp; Coffee.</p></div></div>
+    <div class="step"><b>02</b><div><h3>Snap</h3><p>Take the photo in the app. It gets a time stamp and location so nobody can fake it.</p></div></div>
+    <div class="step"><b>03</b><div><h3>Verify</h3><p>AI checks the car. Legendary catches get a second look from a real person.</p></div></div>
+    <div class="step"><b>04</b><div><h3>Score</h3><p>Points post to your garage. Climb your crew board and the SoCal leaderboard.</p></div></div>
+  </div>
+</section>
+
+<figure class="carfig mid"><svg class="hero-car" viewBox="0 0 600 360" role="img" aria-label="Widebody 2007 WRX STI, front view"><defs><linearGradient id="bst" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a225e"/><stop offset=".22" stop-color="#1546c9"/><stop offset=".5" stop-color="#4d8cff"/><stop offset=".78" stop-color="#1546c9"/><stop offset="1" stop-color="#0a225e"/></linearGradient>
+<linearGradient id="gst" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34414f"/><stop offset="1" stop-color="#070b0f"/></linearGradient>
+<radialGradient id="sst" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<radialGradient id="hst" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#1546c9" stop-opacity=".3"/><stop offset="1" stop-color="#1546c9" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="300" cy="318" rx="290" ry="40" fill="url(#hst)"/><ellipse cx="300" cy="314" rx="255" ry="15" fill="url(#sst)"/>
+<g fill="#c79a4a" stroke="#8a6a2e"><rect x="44" y="214" width="20" height="70" rx="6"/><rect x="536" y="214" width="20" height="70" rx="6"/></g>
+<g><clipPath id="cst1"><rect x="48" y="236" width="88" height="84" rx="10"/></clipPath><rect x="48" y="236" width="88" height="84" rx="10" fill="#15191e"/><g clip-path="url(#cst1)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M53 232 Q76.16 226 89.0 215"/><path d="M131 232 Q107.84 226 95.0 215"/><path d="M53 247 Q76.16 241 89.0 230"/><path d="M131 247 Q107.84 241 95.0 230"/><path d="M53 262 Q76.16 256 89.0 245"/><path d="M131 262 Q107.84 256 95.0 245"/><path d="M53 277 Q76.16 271 89.0 260"/><path d="M131 277 Q107.84 271 95.0 260"/><path d="M53 292 Q76.16 286 89.0 275"/><path d="M131 292 Q107.84 286 95.0 275"/><path d="M53 307 Q76.16 301 89.0 290"/><path d="M131 307 Q107.84 301 95.0 290"/><path d="M53 322 Q76.16 316 89.0 305"/><path d="M131 322 Q107.84 316 95.0 305"/><path d="M53 337 Q76.16 331 89.0 320"/><path d="M131 337 Q107.84 331 95.0 320"/></g><rect x="48" y="236" width="88" height="84" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="50" y="238" width="6" height="80" rx="3" fill="#fff" opacity=".05"/></g><g><clipPath id="cst2"><rect x="464" y="236" width="88" height="84" rx="10"/></clipPath><rect x="464" y="236" width="88" height="84" rx="10" fill="#15191e"/><g clip-path="url(#cst2)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M469 232 Q492.16 226 505.0 215"/><path d="M547 232 Q523.84 226 511.0 215"/><path d="M469 247 Q492.16 241 505.0 230"/><path d="M547 247 Q523.84 241 511.0 230"/><path d="M469 262 Q492.16 256 505.0 245"/><path d="M547 262 Q523.84 256 511.0 245"/><path d="M469 277 Q492.16 271 505.0 260"/><path d="M547 277 Q523.84 271 511.0 260"/><path d="M469 292 Q492.16 286 505.0 275"/><path d="M547 292 Q523.84 286 511.0 275"/><path d="M469 307 Q492.16 301 505.0 290"/><path d="M547 307 Q523.84 301 511.0 290"/><path d="M469 322 Q492.16 316 505.0 305"/><path d="M547 322 Q523.84 316 511.0 305"/><path d="M469 337 Q492.16 331 505.0 320"/><path d="M547 337 Q523.84 331 511.0 320"/></g><rect x="464" y="236" width="88" height="84" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="466" y="238" width="6" height="80" rx="3" fill="#fff" opacity=".05"/></g>
+<path d="M168 38 L196 74 M432 38 L404 74" stroke="#0b0f14" stroke-width="11" stroke-linecap="butt"/><path d="M168 38 L196 74 M432 38 L404 74" stroke="#3ec6ff" stroke-opacity=".35" stroke-width="1"/>
+<path d="M40 30 Q300 18 560 30 L560 44 Q300 34 40 44 Z" fill="#0b0f14" stroke="#3ec6ff" stroke-width="1.5"/>
+<path d="M34 22 L54 22 L56 58 L34 62 Z M566 22 L546 22 L544 58 L566 62 Z" fill="#0b0f14" stroke="#3ec6ff" stroke-width="1.2"/>
+<path d="M268 42 L332 42 L336 54 L264 54 Z" fill="#0a225e" stroke="#7fb0ff" stroke-width="1"/><path d="M276 48 L324 48" stroke="#050607" stroke-width="3"/>
+<path d="M150 134 L196 62 Q202 54 218 54 L382 54 Q398 54 404 62 L450 134 Z" fill="#1546c9" stroke="#bcd4ff" stroke-width="1"/>
+<path d="M168 130 L208 66 Q212 62 224 62 L376 62 Q388 62 392 66 L432 130 Z" fill="url(#gst)"/>
+<path d="M228 68 L282 68 L226 124 L186 124 Z" fill="#fff" opacity=".06"/>
+<path d="M104 118 L146 108 L150 130 L110 136 Z" fill="#1546c9" stroke="#bcd4ff"/><path d="M496 118 L454 108 L450 130 L490 136 Z" fill="#1546c9" stroke="#bcd4ff"/>
+<path d="M40 214 Q42 176 80 160 L146 134 L454 134 L520 160 Q558 176 560 214 L562 262 L38 262 Z" fill="url(#bst)" stroke="#d6e4ff" stroke-width="1.2"/>
+<path d="M40 214 Q50 186 92 182 L92 262 L38 262 Z M560 214 Q550 186 508 182 L508 262 L562 262 Z" fill="#0f37a8" stroke="#7fb0ff" stroke-width="1"/>
+<path d="M246 140 L354 140 L344 162 L256 162 Z" fill="#0a225e" stroke="#7fb0ff" stroke-width="1.2"/><path d="M262 150 L338 150" stroke="#020304" stroke-width="7" stroke-linecap="round"/>
+<path d="M92 170 L216 180 L200 198 L128 204 L100 194 Z" fill="#c9d6e3" stroke="#0a225e" stroke-width="2"/>
+<path d="M508 170 L384 180 L400 198 L472 204 L500 194 Z" fill="#c9d6e3" stroke="#0a225e" stroke-width="2"/>
+<path d="M150 182 L208 184 L196 196 L150 198 Z M450 182 L392 184 L404 196 L450 198 Z" fill="#7f8c99"/>
+<g fill="#1a222b" stroke="#e9f3ff" stroke-width="1.5"><circle cx="122" cy="186" r="9"/><circle cx="478" cy="186" r="9"/><circle cx="176" cy="190" r="6"/><circle cx="424" cy="190" r="6"/></g>
+<path d="M248 182 Q300 172 352 182 L344 206 Q300 214 256 206 Z" fill="#06080b" stroke="#0a225e" stroke-width="2"/>
+<path d="M266 190 Q300 184 334 190" stroke="#20262d" stroke-width="2" fill="none"/><path d="M262 198 Q300 192 338 198" stroke="#20262d" stroke-width="2" fill="none"/>
+<path d="M160 218 L440 218 L428 258 L172 258 Z" fill="#0b0f14" stroke="#0a225e" stroke-width="2"/>
+<rect x="186" y="224" width="228" height="30" rx="3" fill="#8b96a3"/>
+<g stroke="#4f5a66" stroke-width="2"><line x1="188" y1="227" x2="412" y2="227"/><line x1="188" y1="231" x2="412" y2="231"/><line x1="188" y1="235" x2="412" y2="235"/><line x1="188" y1="239" x2="412" y2="239"/><line x1="188" y1="243" x2="412" y2="243"/><line x1="188" y1="247" x2="412" y2="247"/><line x1="188" y1="251" x2="412" y2="251"/></g>
+<g fill="#c3cad3"><rect x="186" y="224" width="10" height="30"/><rect x="404" y="224" width="10" height="30"/></g>
+<path d="M100 222 L152 218 L162 256 L102 258 Z" fill="#07090c"/><path d="M500 222 L448 218 L438 256 L498 258 Z" fill="#07090c"/>
+<path d="M28 262 L572 262 L556 282 L44 282 Z" fill="#0d1116" stroke="#3ec6ff" stroke-opacity=".6" stroke-width="1.2"/>
+<path d="M44 282 L40 292 L74 292 M556 282 L560 292 L526 292" stroke="#3ec6ff" stroke-opacity=".6" fill="none"/></svg><figcaption><span style="color:var(--common)">Common</span> Widebody WRX STI · 10 pts +25% custom</figcaption></figure>
+<section>
+  <h2>Rarity pays</h2>
+  <p style="margin-bottom:14px">Rare factory color: +50%. Custom build: +25%.</p>
+  <div class="tiers">
+    <div class="tier" style="grid-column:1/-1;border-color:#ff5fa2"><span class="lbl" style="color:#ff5fa2">One-of-One</span><span class="pt">10,000</span><small>Wienermobile, Ecto-1, Batmobile tour car</small></div>
+    <div class="tier"><span class="lbl" style="color:var(--legend)">Legendary</span><span class="pt">2,500</span><small>Koenigsegg, Bugatti, F40</small></div>
+    <div class="tier"><span class="lbl" style="color:var(--epic)">Epic</span><span class="pt">500</span><small>Murciélago, Testarossa, R33</small></div>
+    <div class="tier"><span class="lbl" style="color:var(--rare)">Rare</span><span class="pt">100</span><small>Huracán, GT-R, Demon</small></div>
+    <div class="tier"><span class="lbl" style="color:var(--common)">Common</span><span class="pt">10</span><small>STI, Mustang GT, Type R</small></div>
+  </div>
+</section>
+
+<figure class="carfig mid"><svg class="hero-car" viewBox="0 0 600 360" role="img" aria-label="Silver Mustang GTD, front view">
+<defs>
+ <linearGradient id="mb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#dfe6ee"/><stop offset=".5" stop-color="#8f9daf"/><stop offset="1" stop-color="#4a5566"/></linearGradient>
+ <linearGradient id="ms" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#4a5566"/><stop offset=".25" stop-color="#a7b4c3"/><stop offset=".5" stop-color="#d7dfe8"/><stop offset=".75" stop-color="#a7b4c3"/><stop offset="1" stop-color="#4a5566"/></linearGradient>
+ <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#26313c"/><stop offset="1" stop-color="#05080b"/></linearGradient>
+ <pattern id="mesh" width="8" height="8" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="8" height="8" fill="#07090c"/><path d="M0 0H8M0 0V8" stroke="#2a323b" stroke-width="1.2"/></pattern>
+ <radialGradient id="sh2" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+ <radialGradient id="gl2" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#3ec6ff" stop-opacity=".22"/><stop offset="1" stop-color="#3ec6ff" stop-opacity="0"/></radialGradient>
+</defs>
+<ellipse cx="300" cy="318" rx="290" ry="40" fill="url(#gl2)"/>
+<ellipse cx="300" cy="314" rx="260" ry="15" fill="url(#sh2)"/>
+<!-- wing behind roof -->
+<path d="M120 58 L480 58 L486 70 L114 70 Z" fill="#12171d" stroke="#5f6c7b" stroke-width="1"/>
+<path d="M150 70 L168 104 M450 70 L432 104" stroke="#12171d" stroke-width="9"/>
+<!-- tires -->
+<g><clipPath id="cg1"><rect x="44" y="226" width="90" height="96" rx="10"/></clipPath><rect x="44" y="226" width="90" height="96" rx="10" fill="#15191e"/><g clip-path="url(#cg1)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M49 222 Q72.8 216 86.0 205"/><path d="M129 222 Q105.2 216 92.0 205"/><path d="M49 237 Q72.8 231 86.0 220"/><path d="M129 237 Q105.2 231 92.0 220"/><path d="M49 252 Q72.8 246 86.0 235"/><path d="M129 252 Q105.2 246 92.0 235"/><path d="M49 267 Q72.8 261 86.0 250"/><path d="M129 267 Q105.2 261 92.0 250"/><path d="M49 282 Q72.8 276 86.0 265"/><path d="M129 282 Q105.2 276 92.0 265"/><path d="M49 297 Q72.8 291 86.0 280"/><path d="M129 297 Q105.2 291 92.0 280"/><path d="M49 312 Q72.8 306 86.0 295"/><path d="M129 312 Q105.2 306 92.0 295"/><path d="M49 327 Q72.8 321 86.0 310"/><path d="M129 327 Q105.2 321 92.0 310"/><path d="M49 342 Q72.8 336 86.0 325"/><path d="M129 342 Q105.2 336 92.0 325"/></g><rect x="44" y="226" width="90" height="96" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="46" y="228" width="6" height="92" rx="3" fill="#fff" opacity=".05"/></g><g><clipPath id="cg2"><rect x="466" y="226" width="90" height="96" rx="10"/></clipPath><rect x="466" y="226" width="90" height="96" rx="10" fill="#15191e"/><g clip-path="url(#cg2)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M471 222 Q494.8 216 508.0 205"/><path d="M551 222 Q527.2 216 514.0 205"/><path d="M471 237 Q494.8 231 508.0 220"/><path d="M551 237 Q527.2 231 514.0 220"/><path d="M471 252 Q494.8 246 508.0 235"/><path d="M551 252 Q527.2 246 514.0 235"/><path d="M471 267 Q494.8 261 508.0 250"/><path d="M551 267 Q527.2 261 514.0 250"/><path d="M471 282 Q494.8 276 508.0 265"/><path d="M551 282 Q527.2 276 514.0 265"/><path d="M471 297 Q494.8 291 508.0 280"/><path d="M551 297 Q527.2 291 514.0 280"/><path d="M471 312 Q494.8 306 508.0 295"/><path d="M551 312 Q527.2 306 514.0 295"/><path d="M471 327 Q494.8 321 508.0 310"/><path d="M551 327 Q527.2 321 514.0 310"/><path d="M471 342 Q494.8 336 508.0 325"/><path d="M551 342 Q527.2 336 514.0 325"/></g><rect x="466" y="226" width="90" height="96" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="468" y="228" width="6" height="92" rx="3" fill="#fff" opacity=".05"/></g>
+<g fill="#b89668"><rect x="60" y="236" width="12" height="62" rx="4"/><rect x="528" y="236" width="12" height="62" rx="4"/></g>
+<!-- cabin -->
+<path d="M176 132 L210 82 Q216 74 230 74 L370 74 Q384 74 390 82 L424 132 Z" fill="#6e7b8b" stroke="#c7d1dc" stroke-width="1"/>
+<path d="M190 130 L220 86 Q224 82 234 82 L366 82 Q376 82 380 86 L410 130 Z" fill="url(#mg)"/>
+<path d="M236 88 L276 88 L240 126 L206 126 Z" fill="#fff" opacity=".06"/>
+<!-- mirrors -->
+<path d="M140 124 L174 118 L176 134 L146 138 Z" fill="#1a2027"/><path d="M460 124 L426 118 L424 134 L454 138 Z" fill="#1a2027"/>
+<!-- hood + fenders -->
+<path d="M70 196 Q66 160 104 144 Q150 128 200 130 L400 130 Q450 128 496 144 Q534 160 530 196 L536 236 L64 236 Z" fill="url(#ms)" stroke="#e9eef4" stroke-width="1.2"/>
+<!-- hood vents -->
+<path d="M208 146 L276 140 L280 160 L214 168 Z" fill="url(#mesh)" stroke="#2a323b"/>
+<path d="M392 146 L324 140 L320 160 L386 168 Z" fill="url(#mesh)" stroke="#2a323b"/>
+<path d="M300 132 L300 176" stroke="#6e7b8b" stroke-width="1.5" opacity=".7"/>
+<!-- fender vents/louvers -->
+<g stroke="#1a2027" stroke-width="4" stroke-linecap="round"><line x1="90" y1="168" x2="104" y2="196"/><line x1="102" y1="164" x2="116" y2="194"/><line x1="510" y1="168" x2="496" y2="196"/><line x1="498" y1="164" x2="484" y2="194"/></g>
+<!-- headlights: slim with three amber bars -->
+<path d="M100 186 L216 190 L206 206 L106 202 Z" fill="#0b0f14" stroke="#9aa6b4" stroke-width="1"/>
+<path d="M500 186 L384 190 L394 206 L494 202 Z" fill="#0b0f14" stroke="#9aa6b4" stroke-width="1"/>
+<g fill="#ffb21e"><rect x="118" y="192" width="24" height="5" rx="2"/><rect x="148" y="193" width="24" height="5" rx="2"/><rect x="178" y="194" width="24" height="5" rx="2"/>
+<rect x="458" y="192" width="24" height="5" rx="2"/><rect x="428" y="193" width="24" height="5" rx="2"/><rect x="398" y="194" width="24" height="5" rx="2"/></g>
+<g fill="#ffb21e" opacity=".25"><ellipse cx="160" cy="196" rx="54" ry="10"/><ellipse cx="440" cy="196" rx="54" ry="10"/></g>
+<!-- upper grille -->
+<path d="M226 194 L374 194 L366 222 L234 222 Z" fill="url(#mesh)" stroke="#2a323b" stroke-width="1.5"/>
+<!-- front fascia -->
+<path d="M64 236 L536 236 L530 262 L70 262 Z" fill="#7b8899"/>
+<!-- big lower grille -->
+<path d="M150 224 L450 224 L420 278 L180 278 Z" fill="url(#mesh)" stroke="#1a2027" stroke-width="2"/>
+<!-- side intakes -->
+<path d="M74 238 L140 238 L156 274 L84 274 Z" fill="#0b0f14"/><path d="M526 238 L460 238 L444 274 L516 274 Z" fill="#0b0f14"/>
+<!-- splitter -->
+<path d="M40 280 L560 280 L546 296 L54 296 Z" fill="#0e1217" stroke="#3ec6ff" stroke-opacity=".5" stroke-width="1"/>
+<path d="M40 280 L54 296 M560 280 L546 296" stroke="#3ec6ff" stroke-opacity=".5"/>
+</svg>
+
+
+<figcaption><span style="color:var(--epic)">Epic</span> Mustang GTD · 500 pts</figcaption></figure>
+<section>
+  <h2>Most wanted</h2>
+  <div class="most">
+    <div><span>Koenigsegg Jesko</span><span>2,500</span></div>
+    <div><span>Bugatti Chiron</span><span>2,500</span></div>
+    <div><span>Nissan Skyline GT-R R34 V-Spec</span><span>2,500</span></div>
+    <div><span>Ferrari F40</span><span>2,500</span></div>
+    <div><span>Pagani Huayra</span><span>2,500</span></div>
+    <div><span>Porsche Carrera GT</span><span>2,500</span></div>
+  </div>
+</section>
+
+<figure class="carfig mid"><svg class="hero-car" viewBox="0 0 600 360" role="img" aria-label="Red F40, rear view"><defs><linearGradient id="bf4" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6b0806"/><stop offset=".22" stop-color="#d4130f"/><stop offset=".5" stop-color="#ff5a4a"/><stop offset=".78" stop-color="#d4130f"/><stop offset="1" stop-color="#6b0806"/></linearGradient>
+<linearGradient id="gf4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34414f"/><stop offset="1" stop-color="#070b0f"/></linearGradient>
+<radialGradient id="sf4" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<radialGradient id="hf4" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#d4130f" stop-opacity=".3"/><stop offset="1" stop-color="#d4130f" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="300" cy="318" rx="290" ry="40" fill="url(#hf4)"/><ellipse cx="300" cy="314" rx="255" ry="15" fill="url(#sf4)"/><g><clipPath id="cf41"><rect x="50" y="232" width="96" height="90" rx="10"/></clipPath><rect x="50" y="232" width="96" height="90" rx="10" fill="#15191e"/><g clip-path="url(#cf41)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M55 228 Q80.72 222 95.0 211"/><path d="M141 228 Q115.28 222 101.0 211"/><path d="M55 243 Q80.72 237 95.0 226"/><path d="M141 243 Q115.28 237 101.0 226"/><path d="M55 258 Q80.72 252 95.0 241"/><path d="M141 258 Q115.28 252 101.0 241"/><path d="M55 273 Q80.72 267 95.0 256"/><path d="M141 273 Q115.28 267 101.0 256"/><path d="M55 288 Q80.72 282 95.0 271"/><path d="M141 288 Q115.28 282 101.0 271"/><path d="M55 303 Q80.72 297 95.0 286"/><path d="M141 303 Q115.28 297 101.0 286"/><path d="M55 318 Q80.72 312 95.0 301"/><path d="M141 318 Q115.28 312 101.0 301"/><path d="M55 333 Q80.72 327 95.0 316"/><path d="M141 333 Q115.28 327 101.0 316"/><path d="M55 348 Q80.72 342 95.0 331"/><path d="M141 348 Q115.28 342 101.0 331"/></g><rect x="50" y="232" width="96" height="90" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="52" y="234" width="6" height="86" rx="3" fill="#fff" opacity=".05"/></g><g><clipPath id="cf42"><rect x="454" y="232" width="96" height="90" rx="10"/></clipPath><rect x="454" y="232" width="96" height="90" rx="10" fill="#15191e"/><g clip-path="url(#cf42)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M459 228 Q484.72 222 499.0 211"/><path d="M545 228 Q519.28 222 505.0 211"/><path d="M459 243 Q484.72 237 499.0 226"/><path d="M545 243 Q519.28 237 505.0 226"/><path d="M459 258 Q484.72 252 499.0 241"/><path d="M545 258 Q519.28 252 505.0 241"/><path d="M459 273 Q484.72 267 499.0 256"/><path d="M545 273 Q519.28 267 505.0 256"/><path d="M459 288 Q484.72 282 499.0 271"/><path d="M545 288 Q519.28 282 505.0 271"/><path d="M459 303 Q484.72 297 499.0 286"/><path d="M545 303 Q519.28 297 505.0 286"/><path d="M459 318 Q484.72 312 499.0 301"/><path d="M545 318 Q519.28 312 505.0 301"/><path d="M459 333 Q484.72 327 499.0 316"/><path d="M545 333 Q519.28 327 505.0 316"/><path d="M459 348 Q484.72 342 499.0 331"/><path d="M545 348 Q519.28 342 505.0 331"/></g><rect x="454" y="232" width="96" height="90" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="456" y="234" width="6" height="86" rx="3" fill="#fff" opacity=".05"/></g>
+<path d="M200 128 L222 84 L378 84 L400 128 Z" fill="#a10f0c" stroke="#ffb3a8" stroke-width="1"/>
+<path d="M214 126 L230 92 L370 92 L386 126 Z" fill="#0a0d10"/>
+<g stroke="#0a0d10" stroke-width="2"><line x1="246" y1="94" x2="240" y2="124"/><line x1="270" y1="94" x2="266" y2="124"/><line x1="294" y1="94" x2="292" y2="124"/><line x1="318" y1="94" x2="318" y2="124"/><line x1="342" y1="94" x2="344" y2="124"/></g>
+<path d="M72 92 L528 92 L532 108 L68 108 Z" fill="url(#bf4)" stroke="#ffb3a8" stroke-width="1"/>
+<path d="M68 108 L80 140 M532 108 L520 140" stroke="#a10f0c" stroke-width="10"/>
+<path d="M64 150 Q68 132 110 132 L490 132 Q532 132 536 150 L540 236 L60 236 Z" fill="url(#bf4)" stroke="#ffb3a8" stroke-width="1.2"/>
+<rect x="84" y="150" width="432" height="56" rx="6" fill="#0b0d10"/>
+<g stroke="#20262d" stroke-width="2"><line x1="100" y1="152" x2="100" y2="204"/><line x1="110" y1="152" x2="110" y2="204"/><line x1="120" y1="152" x2="120" y2="204"/><line x1="130" y1="152" x2="130" y2="204"/><line x1="140" y1="152" x2="140" y2="204"/><line x1="150" y1="152" x2="150" y2="204"/><line x1="160" y1="152" x2="160" y2="204"/><line x1="170" y1="152" x2="170" y2="204"/><line x1="180" y1="152" x2="180" y2="204"/><line x1="190" y1="152" x2="190" y2="204"/><line x1="200" y1="152" x2="200" y2="204"/><line x1="210" y1="152" x2="210" y2="204"/><line x1="220" y1="152" x2="220" y2="204"/><line x1="230" y1="152" x2="230" y2="204"/><line x1="240" y1="152" x2="240" y2="204"/><line x1="250" y1="152" x2="250" y2="204"/><line x1="260" y1="152" x2="260" y2="204"/><line x1="270" y1="152" x2="270" y2="204"/><line x1="280" y1="152" x2="280" y2="204"/><line x1="290" y1="152" x2="290" y2="204"/><line x1="300" y1="152" x2="300" y2="204"/><line x1="310" y1="152" x2="310" y2="204"/><line x1="320" y1="152" x2="320" y2="204"/><line x1="330" y1="152" x2="330" y2="204"/><line x1="340" y1="152" x2="340" y2="204"/><line x1="350" y1="152" x2="350" y2="204"/><line x1="360" y1="152" x2="360" y2="204"/><line x1="370" y1="152" x2="370" y2="204"/><line x1="380" y1="152" x2="380" y2="204"/><line x1="390" y1="152" x2="390" y2="204"/><line x1="400" y1="152" x2="400" y2="204"/><line x1="410" y1="152" x2="410" y2="204"/><line x1="420" y1="152" x2="420" y2="204"/><line x1="430" y1="152" x2="430" y2="204"/><line x1="440" y1="152" x2="440" y2="204"/><line x1="450" y1="152" x2="450" y2="204"/><line x1="460" y1="152" x2="460" y2="204"/><line x1="470" y1="152" x2="470" y2="204"/><line x1="480" y1="152" x2="480" y2="204"/><line x1="490" y1="152" x2="490" y2="204"/><line x1="500" y1="152" x2="500" y2="204"/><line x1="510" y1="152" x2="510" y2="204"/></g>
+<g stroke="#0a0d10" stroke-width="3"><circle cx="122" cy="178" r="20" fill="#ff2a1a"/><circle cx="172" cy="178" r="20" fill="#ff2a1a"/><circle cx="428" cy="178" r="20" fill="#ff2a1a"/><circle cx="478" cy="178" r="20" fill="#ff2a1a"/></g>
+<g fill="#fff" opacity=".5"><ellipse cx="116" cy="171" rx="6" ry="3"/><ellipse cx="166" cy="171" rx="6" ry="3"/><ellipse cx="422" cy="171" rx="6" ry="3"/><ellipse cx="472" cy="171" rx="6" ry="3"/></g>
+<rect x="250" y="210" width="100" height="22" rx="2" fill="#e8eef3"/>
+<path d="M90 238 L510 238 L494 278 L106 278 Z" fill="#0b0f14"/>
+<g fill="#2a2f35" stroke="#c9c9c9" stroke-width="2"><circle cx="278" cy="256" r="12"/><circle cx="300" cy="256" r="12"/><circle cx="322" cy="256" r="12"/></g><g fill="#050607"><circle cx="278" cy="256" r="6"/><circle cx="300" cy="256" r="6"/><circle cx="322" cy="256" r="6"/></g></svg><figcaption><span style="color:var(--legend)">Legendary</span> F40 · 2,500 pts</figcaption></figure>
+<section>
+  <h2>Every day counts</h2>
+  <div class="steps">
+    <div class="step"><b>7</b><div><h3>Daily streak</h3><p>Catch a car every day. Day 7 pays 500 bonus points.</p></div></div>
+    <div class="step"><b>2X</b><div><h3>Spot of the week</h3><p>One car each week is worth double. This week: Porsche Carrera GT.</p></div></div>
+    <div class="step"><b>3X</b><div><h3>Event check-in</h3><p>Check in at Cars &amp; Coffee and every catch that morning is worth triple.</p></div></div>
+    <div class="step"><b>12</b><div><h3>Badges</h3><p>Godzilla, Raging Bull, Japan Legend, Unicorn and more.</p></div></div>
+  </div>
+</section>
+
+<figure class="carfig mid"><svg class="hero-car" viewBox="0 0 600 360" role="img" aria-label="Shark Blue 911 GT3 RS, rear view"><defs><linearGradient id="bgt" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a4a66"/><stop offset=".22" stop-color="#1aa6d6"/><stop offset=".5" stop-color="#7fe3ff"/><stop offset=".78" stop-color="#1aa6d6"/><stop offset="1" stop-color="#0a4a66"/></linearGradient>
+<linearGradient id="ggt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34414f"/><stop offset="1" stop-color="#070b0f"/></linearGradient>
+<radialGradient id="sgt" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<radialGradient id="hgt" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#1aa6d6" stop-opacity=".3"/><stop offset="1" stop-color="#1aa6d6" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="300" cy="318" rx="290" ry="40" fill="url(#hgt)"/><ellipse cx="300" cy="314" rx="255" ry="15" fill="url(#sgt)"/><g><clipPath id="cgt1"><rect x="60" y="232" width="90" height="90" rx="10"/></clipPath><rect x="60" y="232" width="90" height="90" rx="10" fill="#15191e"/><g clip-path="url(#cgt1)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M65 228 Q88.8 222 102.0 211"/><path d="M145 228 Q121.2 222 108.0 211"/><path d="M65 243 Q88.8 237 102.0 226"/><path d="M145 243 Q121.2 237 108.0 226"/><path d="M65 258 Q88.8 252 102.0 241"/><path d="M145 258 Q121.2 252 108.0 241"/><path d="M65 273 Q88.8 267 102.0 256"/><path d="M145 273 Q121.2 267 108.0 256"/><path d="M65 288 Q88.8 282 102.0 271"/><path d="M145 288 Q121.2 282 108.0 271"/><path d="M65 303 Q88.8 297 102.0 286"/><path d="M145 303 Q121.2 297 108.0 286"/><path d="M65 318 Q88.8 312 102.0 301"/><path d="M145 318 Q121.2 312 108.0 301"/><path d="M65 333 Q88.8 327 102.0 316"/><path d="M145 333 Q121.2 327 108.0 316"/><path d="M65 348 Q88.8 342 102.0 331"/><path d="M145 348 Q121.2 342 108.0 331"/></g><rect x="60" y="232" width="90" height="90" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="62" y="234" width="6" height="86" rx="3" fill="#fff" opacity=".05"/></g><g><clipPath id="cgt2"><rect x="450" y="232" width="90" height="90" rx="10"/></clipPath><rect x="450" y="232" width="90" height="90" rx="10" fill="#15191e"/><g clip-path="url(#cgt2)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M455 228 Q478.8 222 492.0 211"/><path d="M535 228 Q511.2 222 498.0 211"/><path d="M455 243 Q478.8 237 492.0 226"/><path d="M535 243 Q511.2 237 498.0 226"/><path d="M455 258 Q478.8 252 492.0 241"/><path d="M535 258 Q511.2 252 498.0 241"/><path d="M455 273 Q478.8 267 492.0 256"/><path d="M535 273 Q511.2 267 498.0 256"/><path d="M455 288 Q478.8 282 492.0 271"/><path d="M535 288 Q511.2 282 498.0 271"/><path d="M455 303 Q478.8 297 492.0 286"/><path d="M535 303 Q511.2 297 498.0 286"/><path d="M455 318 Q478.8 312 492.0 301"/><path d="M535 318 Q511.2 312 498.0 301"/><path d="M455 333 Q478.8 327 492.0 316"/><path d="M535 333 Q511.2 327 498.0 316"/><path d="M455 348 Q478.8 342 492.0 331"/><path d="M535 348 Q511.2 342 498.0 331"/></g><rect x="450" y="232" width="90" height="90" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="452" y="234" width="6" height="86" rx="3" fill="#fff" opacity=".05"/></g>
+<path d="M188 136 Q200 74 300 70 Q400 74 412 136 Z" fill="url(#bgt)" stroke="#c8f4ff" stroke-width="1"/>
+<path d="M214 132 Q224 88 300 86 Q376 88 386 132 Z" fill="url(#ggt)"/>
+<path d="M70 236 L72 168 Q80 136 150 132 L450 132 Q520 136 528 168 L530 236 Z" fill="url(#bgt)" stroke="#c8f4ff" stroke-width="1.2"/>
+<path d="M232 60 L368 60 L372 70 L228 70 Z" fill="#0d1116"/><path d="M110 86 L490 86 Q500 86 500 94 L500 100 L100 100 L100 94 Q100 86 110 86 Z" fill="#0d1116" stroke="#3ec6ff" stroke-width="1"/>
+<path d="M250 100 L246 132 M350 100 L354 132" stroke="#0d1116" stroke-width="8"/>
+<rect x="84" y="160" width="432" height="10" rx="5" fill="#ff2a1a"/><rect x="84" y="160" width="432" height="10" rx="5" fill="none" stroke="#ff9a8a" stroke-opacity=".6"/>
+<g fill="#0d1116"><rect x="230" y="180" width="4" height="22" rx="1"/><rect x="238" y="180" width="4" height="22" rx="1"/><rect x="246" y="180" width="4" height="22" rx="1"/><rect x="254" y="180" width="4" height="22" rx="1"/><rect x="262" y="180" width="4" height="22" rx="1"/><rect x="270" y="180" width="4" height="22" rx="1"/><rect x="278" y="180" width="4" height="22" rx="1"/><rect x="286" y="180" width="4" height="22" rx="1"/><rect x="294" y="180" width="4" height="22" rx="1"/><rect x="302" y="180" width="4" height="22" rx="1"/><rect x="310" y="180" width="4" height="22" rx="1"/><rect x="318" y="180" width="4" height="22" rx="1"/><rect x="326" y="180" width="4" height="22" rx="1"/><rect x="334" y="180" width="4" height="22" rx="1"/><rect x="342" y="180" width="4" height="22" rx="1"/><rect x="350" y="180" width="4" height="22" rx="1"/><rect x="358" y="180" width="4" height="22" rx="1"/><rect x="366" y="180" width="4" height="22" rx="1"/></g>
+<rect x="250" y="208" width="100" height="22" rx="2" fill="#e8eef3"/><text x="300" y="225" text-anchor="middle" font-family="Chakra Petch,Arial,sans-serif" font-weight="700" font-size="16" fill="#0a4a66" letter-spacing="2">GT3 RS</text>
+<path d="M76 236 L524 236 L508 280 L92 280 Z" fill="#0b0f14"/>
+<g stroke="#232b34" stroke-width="3"><line x1="170" y1="238" x2="170" y2="278"/><line x1="210" y1="238" x2="210" y2="278"/><line x1="390" y1="238" x2="390" y2="278"/><line x1="430" y1="238" x2="430" y2="278"/></g>
+<g fill="#2a2f35" stroke="#c9c9c9" stroke-width="2"><circle cx="282" cy="258" r="13"/><circle cx="318" cy="258" r="13"/></g><g fill="#050607"><circle cx="282" cy="258" r="7"/><circle cx="318" cy="258" r="7"/></g></svg><figcaption><span style="color:var(--epic)">Epic</span> 911 GT3 RS · 500 pts</figcaption></figure>
+<section>
+  <h2>Points get you gear</h2>
+  <div class="rw">
+    <div><span>10% off at Repair Shop Life</span><span>2,500</span></div>
+    <div><span>Sticker pack</span><span>7,500</span></div>
+    <div><span>Free tee</span><span>15,000</span></div>
+    <div><span>Hoodie + Legendary badge</span><span>50,000</span></div>
+  </div>
+</section>
+
+<figure class="carfig mid"><svg class="hero-car" viewBox="0 0 600 360" role="img" aria-label="White and orange Jesko, rear view"><defs><linearGradient id="bje" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#8a939d"/><stop offset=".22" stop-color="#d9dee4"/><stop offset=".5" stop-color="#ffffff"/><stop offset=".78" stop-color="#d9dee4"/><stop offset="1" stop-color="#8a939d"/></linearGradient>
+<linearGradient id="gje" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34414f"/><stop offset="1" stop-color="#070b0f"/></linearGradient>
+<radialGradient id="sje" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#000" stop-opacity=".6"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
+<radialGradient id="hje" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#d9dee4" stop-opacity=".3"/><stop offset="1" stop-color="#d9dee4" stop-opacity="0"/></radialGradient></defs>
+<ellipse cx="300" cy="318" rx="290" ry="40" fill="url(#hje)"/><ellipse cx="300" cy="314" rx="255" ry="15" fill="url(#sje)"/><g><clipPath id="cje1"><rect x="46" y="236" width="100" height="86" rx="10"/></clipPath><rect x="46" y="236" width="100" height="86" rx="10" fill="#15191e"/><g clip-path="url(#cje1)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M51 232 Q78.0 226 93.0 215"/><path d="M141 232 Q114.0 226 99.0 215"/><path d="M51 247 Q78.0 241 93.0 230"/><path d="M141 247 Q114.0 241 99.0 230"/><path d="M51 262 Q78.0 256 93.0 245"/><path d="M141 262 Q114.0 256 99.0 245"/><path d="M51 277 Q78.0 271 93.0 260"/><path d="M141 277 Q114.0 271 99.0 260"/><path d="M51 292 Q78.0 286 93.0 275"/><path d="M141 292 Q114.0 286 99.0 275"/><path d="M51 307 Q78.0 301 93.0 290"/><path d="M141 307 Q114.0 301 99.0 290"/><path d="M51 322 Q78.0 316 93.0 305"/><path d="M141 322 Q114.0 316 99.0 305"/><path d="M51 337 Q78.0 331 93.0 320"/><path d="M141 337 Q114.0 331 99.0 320"/></g><rect x="46" y="236" width="100" height="86" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="48" y="238" width="6" height="82" rx="3" fill="#fff" opacity=".05"/></g><g><clipPath id="cje2"><rect x="454" y="236" width="100" height="86" rx="10"/></clipPath><rect x="454" y="236" width="100" height="86" rx="10" fill="#15191e"/><g clip-path="url(#cje2)" stroke="#4b5560" stroke-width="4.2" fill="none" stroke-linecap="round"><path d="M459 232 Q486.0 226 501.0 215"/><path d="M549 232 Q522.0 226 507.0 215"/><path d="M459 247 Q486.0 241 501.0 230"/><path d="M549 247 Q522.0 241 507.0 230"/><path d="M459 262 Q486.0 256 501.0 245"/><path d="M549 262 Q522.0 256 507.0 245"/><path d="M459 277 Q486.0 271 501.0 260"/><path d="M549 277 Q522.0 271 507.0 260"/><path d="M459 292 Q486.0 286 501.0 275"/><path d="M549 292 Q522.0 286 507.0 275"/><path d="M459 307 Q486.0 301 501.0 290"/><path d="M549 307 Q522.0 301 507.0 290"/><path d="M459 322 Q486.0 316 501.0 305"/><path d="M549 322 Q522.0 316 507.0 305"/><path d="M459 337 Q486.0 331 501.0 320"/><path d="M549 337 Q522.0 331 507.0 320"/></g><rect x="454" y="236" width="100" height="86" rx="10" fill="none" stroke="#5c6772" stroke-width="2.5"/><rect x="456" y="238" width="6" height="82" rx="3" fill="#fff" opacity=".05"/></g>
+<path d="M210 140 L236 96 Q240 90 250 90 L350 90 Q360 90 364 96 L390 140 Z" fill="#e9edf1" stroke="#ff7a1a" stroke-width="1.2"/>
+<path d="M226 136 L246 100 L354 100 L374 136 Z" fill="url(#gje)"/>
+<path d="M150 48 Q300 34 450 48 L450 60 Q300 48 150 60 Z" fill="#0d1116" stroke="#ff7a1a" stroke-width="1.5"/>
+<path d="M200 58 Q210 100 236 112 M400 58 Q390 100 364 112" stroke="#0d1116" stroke-width="7" fill="none"/>
+<path d="M58 238 L64 170 Q76 140 160 138 L440 138 Q524 140 536 170 L542 238 Z" fill="url(#bje)" stroke="#ffffff" stroke-width="1.2"/>
+<path d="M60 186 L540 186" stroke="#ff7a1a" stroke-width="5"/>
+<path d="M92 160 Q120 150 170 158 Q146 172 98 176 Z" fill="#ff2a1a"/><path d="M508 160 Q480 150 430 158 Q454 172 502 176 Z" fill="#ff2a1a"/>
+<rect x="200" y="148" width="200" height="30" rx="4" fill="#0d1116"/>
+<g fill="#20262d"><circle cx="214" cy="163" r="4"/><circle cx="228" cy="163" r="4"/><circle cx="242" cy="163" r="4"/><circle cx="256" cy="163" r="4"/><circle cx="270" cy="163" r="4"/><circle cx="284" cy="163" r="4"/><circle cx="298" cy="163" r="4"/><circle cx="312" cy="163" r="4"/><circle cx="326" cy="163" r="4"/><circle cx="340" cy="163" r="4"/><circle cx="354" cy="163" r="4"/><circle cx="368" cy="163" r="4"/><circle cx="382" cy="163" r="4"/></g>
+<path d="M70 238 L530 238 L512 284 L88 284 Z" fill="#0b0f14"/>
+<g stroke="#ff7a1a" stroke-width="2" opacity=".7"><line x1="150" y1="240" x2="138.0" y2="282"/><line x1="186" y1="240" x2="176.88" y2="282"/><line x1="222" y1="240" x2="215.76" y2="282"/><line x1="258" y1="240" x2="254.64" y2="282"/><line x1="294" y1="240" x2="293.52" y2="282"/><line x1="330" y1="240" x2="332.4" y2="282"/><line x1="366" y1="240" x2="371.28" y2="282"/><line x1="402" y1="240" x2="410.16" y2="282"/><line x1="438" y1="240" x2="449.04" y2="282"/></g>
+<ellipse cx="300" cy="212" rx="22" ry="16" fill="#2a2f35" stroke="#c9a46a" stroke-width="3"/><ellipse cx="300" cy="212" rx="13" ry="9" fill="#050607"/></svg><figcaption><span style="color:var(--legend)">Legendary</span> Koenigsegg Jesko · 2,500 pts</figcaption></figure>
+<section>
+  <h2>Put it on your home screen</h2>
+  <p style="margin-bottom:14px">No app store needed. Took the shot on your phone camera while riding along? Upload it within 48 hours and it still counts. Thirty seconds and it opens like any other app.</p>
+  <div class="os">
+    <div class="card"><h3>iPhone</h3><ol><li>Open this page in Safari.</li><li>Tap the Share button (square with the arrow).</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol></div>
+    <div class="card"><h3>Android</h3><ol><li>Open this page in Chrome.</li><li>Tap the three dots, top right.</li><li>Tap <b>Add to Home screen</b>, then <b>Install</b>.</li></ol></div>
+  </div>
+</section>
+
+<section>
+  <div class="safe"><b>Passengers and parked cars only.</b> Never use the app while you drive. The camera locks when the phone is moving at highway speed.</div>
+</section>
+
+<footer>
+  <nav><a href="https://revcatchparts.com" target="_blank" rel="noopener">RevCatch Parts</a><a href="https://revcatchparts.com/shops" target="_blank" rel="noopener">RevCatch Shops</a><a href="https://crm.revcatchparts.com" target="_blank" rel="noopener">RevCatch CRM</a><a href="https://repairshoplife.com" target="_blank" rel="noopener">Repair Shop Life</a></nav>
+  <span>© 2026 Diesel Dust Inc. RevCatch Cars is a fan game and is not affiliated with any automaker.</span>
+</footer>
+</div>
+<script>
+const msg="Catch rare cars and get free gear. Join me on RevCatch Cars: https://cars.revcatchparts.com";
+document.getElementById("share").onclick=async()=>{const t=document.getElementById("toast");
+ if(navigator.share){try{await navigator.share({text:msg});return}catch(e){}}
+ try{await navigator.clipboard.writeText(msg);t.textContent="Link copied. Paste it in a text to your friend."}catch(e){t.textContent=msg}};
+function road(){const c=document.getElementById("road"),d=devicePixelRatio||1,w=c.clientWidth,h=c.clientHeight;c.width=w*d;c.height=h*d;const x=c.getContext("2d");x.scale(d,d);const cs=getComputedStyle(document.documentElement),v=n=>cs.getPropertyValue(n);
+ for(let i=0;i<7;i++){const y=h*.72+i*i*3;x.strokeStyle=v("--line");x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke()}
+ const s=Math.min(w/300,1.6),cx=w/2,cy=h*.7;x.save();x.translate(cx,cy);x.scale(s,s);x.beginPath();x.moveTo(-120,12);x.lineTo(-115,-6);x.lineTo(-45,-16);x.quadraticCurveTo(-8,-40,38,-33);x.lineTo(102,-11);x.lineTo(122,0);x.lineTo(120,12);x.closePath();
+ x.fillStyle=v("--panel");x.fill();x.strokeStyle=v("--accent");x.lineWidth=2/s;x.stroke();x.fillStyle=v("--bg");[-68,68].forEach(q=>{x.beginPath();x.arc(q,12,17,0,7);x.fill();x.strokeStyle=v("--silver");x.stroke()});
+ x.strokeStyle=v("--accent");x.globalAlpha=.5;for(let i=0;i<4;i++){x.beginPath();x.moveTo(-140-i*18,-20+i*9);x.lineTo(-190-i*30,-20+i*9);x.stroke()}x.restore()}
+
+</script>
+<script src="/brand.js"></script></body></html>
