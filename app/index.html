@@ -1,0 +1,595 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#121518"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="RevCatch Cars">
+<link rel="manifest" href="/manifest.json">
+<style>:root{padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}body{margin:0;font:14px system-ui}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>RevCatch Cars</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700&family=IBM+Plex+Sans:wght@400;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: phone-shaped app column, dash-cluster feel — tach-red accent on carbon, rarity colors are semantic */
+:root{
+  --bg:#121518;--panel:#1b1f24;--line:#2c323a;--fg:#eef2f5;--mute:#8b95a1;--silver:#c3cad3;
+  --accent:#3ec6ff;--common:#9aa4b1;--rare:#3fa2ff;--epic:#b06bff;--legend:#ffb21e;--one:#ff5fa2;--ok:#2fd27a;
+  --display:"Chakra Petch",system-ui,sans-serif;--body:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace;
+  color-scheme:dark}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px}
+.app{max-width:440px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:.02em}
+.lbl{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums;font-family:var(--mono)}
+/* PIN */
+#lock{display:flex;flex-direction:column;align-items:center;gap:18px;padding-block:24px}
+.logo{display:flex;align-items:center;gap:10px}.logo img{height:34px;width:auto}.logo span{font-family:var(--display);font-weight:700;font-size:26px;letter-spacing:.18em;color:var(--silver)}
+.logo.sm img{height:24px}.logo.sm span{font-size:18px}
+#bgcars{position:fixed;inset:0;width:100%;height:100%;z-index:-1;opacity:.22;pointer-events:none}
+.pid{font-family:var(--mono);color:var(--accent)}
+input[type=text],input[type=tel]{width:100%;box-sizing:border-box;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:11px;color:var(--fg);font:inherit}
+.dots{display:flex;gap:14px}.dots i{width:14px;height:14px;border-radius:50%;border:2px solid var(--mute)}.dots i.on{background:var(--accent);border-color:var(--accent)}
+.pad{display:grid;grid-template-columns:repeat(3,72px);gap:12px}
+.pad button{height:64px;border-radius:50%;background:var(--panel);border:1px solid var(--line);font-family:var(--mono);font-size:22px}
+.pad button:active{background:var(--line)}
+.err{color:var(--accent);min-height:18px;font-size:13px}
+/* gauge */
+.hero{display:grid;grid-template-columns:130px 1fr;gap:16px;align-items:center}
+.stats{display:grid;gap:8px}.stat{display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:6px}
+.tabs{display:flex;gap:4px;background:var(--panel);border-radius:10px;padding:4px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.tabs button{flex:1;background:none;border:0;padding:9px 0;border-radius:7px;font-size:13px;font-weight:600;color:var(--mute)}
+.tabs button[aria-selected=true]{background:var(--line);color:var(--fg)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:none;border-radius:99px;padding:5px 11px;font-size:12px}
+.chip.on{border-color:var(--fg)}
+.car{display:grid;grid-template-columns:4px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+.car .bar{height:34px;border-radius:2px}
+.car.no{opacity:.45}.car .nm{font-weight:600}.car .sub{font-size:12px;color:var(--mute)}
+.tag{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:4px;border:1px solid currentColor}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px}
+.cta{background:var(--accent);border:0;border-radius:10px;padding:13px;font-family:var(--display);font-weight:700;font-size:16px;color:#fff}
+.cta:disabled{opacity:.4;cursor:not-allowed}
+select,input[type=file]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--fg);font:inherit;box-sizing:border-box}
+.check{display:flex;gap:10px;align-items:center;font-size:14px}.check span:first-child{width:18px;text-align:center;font-family:var(--mono)}
+.prev{max-height:200px;border-radius:8px;object-fit:cover;width:100%}
+.lb{display:grid;grid-template-columns:28px 1fr auto;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.lb.me{color:var(--accent)}
+.rw{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.days{display:flex;gap:4px}.days i{width:12px;height:22px;border-radius:3px;background:var(--line)}.days i.on{background:var(--accent)}
+.sotw{border-color:color-mix(in srgb,var(--legend) 45%,var(--line))}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.badge{border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;display:grid;gap:4px;font-size:12px}.badge b{font-family:var(--display);font-size:13px}.badge.no{opacity:.4}.badge svg{margin:0 auto}
+.opt{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.note{font-size:12px;color:var(--mute);line-height:1.5}
+@media (prefers-reduced-motion:no-preference){.car,.lb{transition:opacity .2s}}
+</style>
+
+<canvas id="bgcars" aria-hidden="true"></canvas>
+<div class="app">
+<section id="lock">
+  <div class="logo"><img alt="RevCatch" data-logo src=""><span>CARS</span></div>
+  <div class="lbl" id="lockmsg">Player #00001 · enter your 4-digit PIN</div>
+  <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
+  <div class="err" id="err"></div>
+  <div class="pad" id="pad"></div>
+  <div class="note">Demo PIN: 1234</div>
+</section>
+
+<section id="main" hidden>
+  <div class="app">
+    <div class="rw"><div class="logo sm"><img alt="RevCatch" data-logo src=""><span>CARS</span></div><span class="lbl">You · <span class="pid">#00001</span></span></div>
+    <div class="hero">
+      <canvas id="gauge" width="260" height="260" style="width:130px;height:130px" aria-label="Cars caught out of total"></canvas>
+      <div class="stats" id="stats"></div>
+    </div>
+    <div class="box" style="gap:10px">
+      <div class="rw"><div><div class="lbl">Daily streak</div><div style="font-family:var(--display);font-size:22px;font-weight:700"><span id="streak">6</span> days</div></div>
+        <div class="days" id="days"></div></div>
+      <div class="note" id="streaknote">Catch one car today to make it 7. Day 7 pays a +500 bonus.</div>
+    </div>
+    <div class="box sotw"><div class="rw"><span class="lbl" style="color:var(--legend)">Spot of the week</span><span class="tag" style="color:var(--legend)">2X POINTS</span></div>
+      <div style="font-family:var(--display);font-size:20px;font-weight:700">Porsche Carrera GT</div><div class="note">5,000 points until Sunday midnight. 3 spotted in SoCal so far.</div></div>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-t="dex">Garage</button>
+      <button role="tab" aria-selected="false" data-t="cap">Capture</button>
+      <button role="tab" aria-selected="false" data-t="lb">Leaders</button>
+      <button role="tab" aria-selected="false" data-t="cr">Crew</button>
+      <button role="tab" aria-selected="false" data-t="rw">Rewards</button>
+    </div>
+
+    <div id="t-dex" class="app">
+      <div class="chips" id="filters"></div>
+      <div id="list"></div>
+    </div>
+
+    <div id="t-cap" class="app" hidden>
+      <div class="box">
+        <h3>Spot a car</h3>
+        <label class="lbl" for="photo">1 · Take or upload photo</label>
+        <input type="file" id="photo" accept="image/*" capture="environment">
+        <img id="prev" class="prev" hidden alt="Your capture">
+        <label class="lbl" for="pick">2 · What did you catch?</label>
+        <select id="pick"></select>
+        <div class="lbl">3 · Bonuses (checked by AI + review)</div>
+        <label class="opt"><input type="checkbox" id="bcolor"> Rare factory color (+50%)</label>
+        <label class="opt"><input type="checkbox" id="bcustom"> Custom build: widebody, wrap, swap, lift (+25%)</label>
+        <div class="lbl">4 · Anti-cheat checks</div>
+        <div id="checks"></div>
+        <button class="cta" id="submit" disabled>Submit for verification</button>
+        <div class="note">Snapped it on your phone camera? Upload it within 48 hours. The photo's own time and location data must match, and screenshots or photos of screens are rejected. Every capture is stamped with time, GPS, and device ID, then the AI must match the car before points post. Legendary catches also get a human review.</div>
+      </div>
+      <div class="box"><h3>Pending review</h3><div id="pending" class="note">Nothing waiting.</div></div>
+    </div>
+
+    <div id="t-lb" class="app" hidden>
+      <div class="box"><div class="rw"><h3>SoCal leaderboard</h3><span class="lbl">This week</span></div><div id="board"></div>
+      <div class="note">Sample players for the demo.</div></div>
+      <div class="box"><h3>Spotted this weekend</h3>
+        <div class="car"><div class="bar" style="background:var(--legend)"></div><div><div class="nm">Cars &amp; Coffee Irvine</div><div class="sub">Sat 7am · check in for 3X points all morning</div></div><button class="chip on" id="checkin">Check in</button></div>
+        <div class="car"><div class="bar" style="background:var(--epic)"></div><div><div class="nm">Malibu PCH Sunday run</div><div class="sub">Sun morning · Epic sightings likely</div></div><span class="tag" style="color:var(--epic)">HOT</span></div>
+        <div class="note">Sample events. Real events become sponsored placements.</div>
+      </div>
+    </div>
+
+    <div id="t-cr" class="app" hidden>
+      <div class="box"><div class="rw"><h3>Your player number</h3><span class="pid num" style="font-size:22px">#00001</span></div>
+        <div class="note">Every player gets a number when they sign up. Give yours to your buddies so they can add you.</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="chip on" id="copyid">Copy my number</button><button class="chip on" id="invite">Text a buddy an invite</button></div><div class="note" id="imsg"></div></div>
+      <div class="box"><h3>Add a buddy</h3>
+        <label class="lbl" for="buddy">Their player number</label>
+        <input type="tel" id="buddy" placeholder="e.g. 00042" inputmode="numeric" maxlength="5">
+        <button class="cta" id="addb">Add to my crew</button><div class="note" id="bmsg"></div></div>
+      <div class="box"><div class="rw"><h3>Crew leaderboard</h3><span class="lbl">All time</span></div><div id="crew"></div>
+        <div class="note">Sample buddies for the demo. Tap a name to see their garage.</div><div id="peek"></div></div>
+    </div>
+
+    <div id="t-rw" class="app" hidden>
+      <div class="box"><div class="rw"><h3>Badges</h3><span class="lbl" id="bcount"></span></div><div class="badges" id="badges"></div></div>
+      <div class="box"><div class="rw"><h3>Your points</h3><span class="num" id="pts2" style="font-size:22px"></span></div>
+      <div id="rewards"></div>
+      <div class="note">Rewards redeem as codes on repairshoplife.com. Sponsor perks slot in here as advertisers sign on.</div></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+const T={O:{n:"One-of-One",p:10000,c:"var(--one)"},C:{n:"Common",p:10,c:"var(--common)"},R:{n:"Rare",p:100,c:"var(--rare)"},E:{n:"Epic",p:500,c:"var(--epic)"},L:{n:"Legendary",p:2500,c:"var(--legend)"}};
+const RAW=`L|Bugatti Chiron|Bugatti
+L|Bugatti Veyron|Bugatti
+L|Koenigsegg Jesko|Koenigsegg
+L|Koenigsegg Regera|Koenigsegg
+L|Koenigsegg Agera RS|Koenigsegg
+L|Pagani Huayra|Pagani
+L|Pagani Zonda|Pagani
+L|McLaren P1|McLaren
+L|McLaren Senna|McLaren
+L|Ferrari LaFerrari|Ferrari
+L|Ferrari Enzo|Ferrari
+L|Ferrari F40|Ferrari
+L|Ferrari F50|Ferrari
+L|Porsche 918 Spyder|Porsche
+L|Porsche Carrera GT|Porsche
+L|Lamborghini Countach|Lamborghini
+L|Lamborghini Sian|Lamborghini
+L|Ford GT40 (original)|Ford
+L|Shelby Cobra 427|Shelby
+L|Rimac Nevera|Rimac
+L|Mercedes-AMG One|Mercedes-AMG
+L|Aston Martin Valkyrie|Aston Martin
+L|Nissan Skyline GT-R R34 V-Spec|Nissan
+L|Gordon Murray T.50|GMA
+E|Lamborghini Aventador SVJ|Lamborghini
+E|Lamborghini Murcielago|Lamborghini
+E|Lamborghini Diablo|Lamborghini
+E|Lamborghini Revuelto|Lamborghini
+E|Ferrari Testarossa|Ferrari
+E|Ferrari SF90 Stradale|Ferrari
+E|Ferrari 812 Superfast|Ferrari
+E|Ferrari Daytona SP3|Ferrari
+E|Ferrari 458 Speciale|Ferrari
+E|McLaren 765LT|McLaren
+E|McLaren 720S|McLaren
+E|Porsche 911 GT2 RS|Porsche
+E|Porsche 911 GT3 RS|Porsche
+E|Porsche 959|Porsche
+E|Nissan Skyline GT-R R32|Nissan
+E|Nissan Skyline GT-R R33|Nissan
+E|Toyota Supra MK4 Turbo|Toyota
+E|Lexus LFA|Lexus
+E|Honda NSX (1st gen)|Honda
+E|Mazda RX-7 FD|Mazda
+E|Ford GT (2017+)|Ford
+E|Dodge Viper ACR|Dodge
+E|Rolls-Royce Cullinan|Rolls-Royce
+E|Rolls-Royce Phantom|Rolls-Royce
+E|Bentley Continental GT Speed|Bentley
+E|Mercedes-AMG G63 4x4²|Mercedes-AMG
+E|Aston Martin DBS|Aston Martin
+E|BMW M1|BMW
+E|Mercedes 300SL Gullwing|Mercedes
+E|Lotus Evija|Lotus
+E|Maserati MC20|Maserati
+E|DeLorean DMC-12|DeLorean
+R|Lamborghini Huracan|Lamborghini
+R|Lamborghini Urus|Lamborghini
+R|Lamborghini Gallardo|Lamborghini
+R|Ferrari 488|Ferrari
+R|Ferrari F8 Tributo|Ferrari
+R|Ferrari Roma|Ferrari
+R|Ferrari 296 GTB|Ferrari
+R|Ferrari Purosangue|Ferrari
+R|McLaren Artura|McLaren
+R|McLaren 570S|McLaren
+R|Porsche 911 Turbo S|Porsche
+R|Porsche Taycan Turbo S|Porsche
+R|Audi R8 V10|Audi
+R|Audi RS6 Avant|Audi
+R|Nissan GT-R R35|Nissan
+R|Nissan GT-R Nismo|Nissan
+R|Acura NSX (2nd gen)|Acura
+R|Toyota GR Supra|Toyota
+R|Chevrolet Corvette Z06 C8|Chevrolet
+R|Chevrolet Corvette ZR1|Chevrolet
+R|Dodge Challenger SRT Demon|Dodge
+R|Dodge Challenger Hellcat Redeye|Dodge
+R|Ford Mustang Shelby GT500|Ford
+R|Ford Mustang Boss 302|Ford
+R|Jeep Grand Cherokee Trackhawk|Jeep
+R|Ram TRX|Ram
+R|BMW M5 CS|BMW
+R|BMW M4 CSL|BMW
+R|Mercedes-AMG GT Black Series|Mercedes-AMG
+R|Mercedes-AMG G63|Mercedes-AMG
+R|Aston Martin Vantage|Aston Martin
+R|Bentley Bentayga|Bentley
+R|Maserati GranTurismo|Maserati
+R|Lotus Emira|Lotus
+R|Cadillac CT5-V Blackwing|Cadillac
+R|Tesla Model S Plaid|Tesla
+R|Lucid Air Sapphire|Lucid
+R|Honda S2000|Honda
+R|Mitsubishi Lancer Evo IX|Mitsubishi
+R|Subaru Impreza 22B|Subaru
+R|Plymouth Hemi Cuda|Plymouth
+R|Chevrolet Chevelle SS 454|Chevrolet
+C|Subaru WRX STI|Subaru
+C|Ford Mustang GT|Ford
+C|Chevrolet Camaro ZL1|Chevrolet
+C|Chevrolet Corvette C8 Stingray|Chevrolet
+C|Dodge Charger Scat Pack|Dodge
+C|Dodge Challenger Scat Pack|Dodge
+C|Porsche 911 Carrera|Porsche
+C|Porsche Cayman GT4|Porsche
+C|BMW M3|BMW
+C|BMW M2|BMW
+C|Audi RS3|Audi
+C|Mercedes-AMG C63|Mercedes-AMG
+C|Toyota GR86|Toyota
+C|Toyota GR Corolla|Toyota
+C|Honda Civic Type R|Honda
+C|Hyundai Elantra N|Hyundai
+C|Volkswagen Golf R|Volkswagen
+C|Nissan Z|Nissan
+C|Nissan 350Z|Nissan
+C|Mazda MX-5 Miata|Mazda
+C|Ford Bronco Raptor|Ford
+C|Ford F-150 Raptor R|Ford
+C|Jeep Wrangler Rubicon 392|Jeep
+C|Cadillac Escalade-V|Cadillac
+C|Tesla Model 3 Performance|Tesla
+O|Oscar Mayer Wienermobile|Oscar Mayer
+O|Ghostbusters Ecto-1|Movie car
+O|Batmobile (1989 tour car)|Movie car
+O|Batmobile (1966 TV replica)|TV car
+O|Back to the Future DeLorean replica|Movie car
+O|General Lee Dodge Charger|TV car
+O|KITT Pontiac Trans Am|TV car
+O|Mystery Machine van|TV car
+O|Monster Jam truck (on the street)|Monster truck
+O|Hot Wheels life-size build|Show car
+O|Barbie Corvette (full size)|Show car
+O|Popemobile|One-off
+O|Peterbilt Optimus Prime|Movie truck
+O|Gumpert / Jurassic Park Ford Explorer replica|Movie car
+O|Eleanor Mustang GT500|Movie car
+L|Bugatti Divo|Bugatti
+L|Bugatti Bolide|Bugatti
+L|Koenigsegg CC850|Koenigsegg
+L|Koenigsegg Gemera|Koenigsegg
+L|Pagani Utopia|Pagani
+L|McLaren F1|McLaren
+L|McLaren Speedtail|McLaren
+L|McLaren Elva|McLaren
+L|Ferrari 288 GTO|Ferrari
+L|Ferrari Monza SP2|Ferrari
+L|Lamborghini Veneno|Lamborghini
+L|Lamborghini Miura|Lamborghini
+L|Lamborghini Centenario|Lamborghini
+L|Porsche 911 GT1|Porsche
+L|Mercedes-Benz SLR McLaren|Mercedes-Benz
+L|Jaguar XJ220|Jaguar
+L|Ford GT Heritage Edition|Ford
+L|Shelby GT500 Super Snake (1967)|Shelby
+L|Toyota 2000GT|Toyota
+L|SSC Tuatara|SSC
+L|Hennessey Venom F5|Hennessey
+L|Czinger 21C|Czinger
+L|Aston Martin One-77|Aston Martin
+L|Nissan GT-R50 by Italdesign|Nissan
+L|Porsche 935 (2019)|Porsche
+E|Lamborghini Reventon|Lamborghini
+E|Lamborghini Countach LPI 800-4|Lamborghini
+E|Ferrari 599 GTO|Ferrari
+E|Ferrari F12tdf|Ferrari
+E|Ferrari 430 Scuderia|Ferrari
+E|Ferrari 360 Challenge Stradale|Ferrari
+E|Ferrari 12Cilindri|Ferrari
+E|McLaren 675LT|McLaren
+E|McLaren 600LT|McLaren
+E|McLaren W1|McLaren
+E|Porsche 911 S/T|Porsche
+E|Porsche 911 Dakar|Porsche
+E|Porsche 911 R (2016)|Porsche
+E|Porsche 993 Turbo|Porsche
+E|Porsche 964 RS|Porsche
+E|Singer-reimagined Porsche 911|Singer
+E|RWB Porsche 911|RWB
+E|Nissan Skyline GT-R R34 Z-Tune|Nissan
+E|Nissan Skyline 2000GT-R Hakosuka|Nissan
+E|Nissan Fairlady Z 432|Nissan
+E|Honda NSX-R|Honda
+E|Toyota Supra MK4 (stock twin turbo)|Toyota
+E|Mitsubishi 3000GT VR-4|Mitsubishi
+E|Subaru WRX STI S209|Subaru
+E|Lexus LC 500 Inspiration|Lexus
+E|BMW M3 E30 Sport Evo|BMW
+E|BMW 3.0 CSL (2023)|BMW
+E|BMW Z8|BMW
+E|Mercedes-AMG GT R Pro|Mercedes-AMG
+E|Mercedes-Benz 190E Evo II|Mercedes-Benz
+E|Audi RS2 Avant|Audi
+E|Audi Sport quattro|Audi
+E|Lancia Delta Integrale|Lancia
+E|Lancia Stratos|Lancia
+E|Ford RS200|Ford
+E|Ford Mustang Shelby GT350R|Ford
+E|Chevrolet Corvette C8 E-Ray|Chevrolet
+E|Chevrolet Corvette ZR1X|Chevrolet
+E|Chevrolet Camaro COPO|Chevrolet
+E|Chevrolet Chevelle LS6 (1970)|Chevrolet
+E|Pontiac GTO Judge|Pontiac
+E|Plymouth Superbird|Plymouth
+E|Dodge Charger Daytona (1969)|Dodge
+E|Dodge Viper GTS (1996)|Dodge
+E|Buick GNX|Buick
+E|AC Cobra replica|Shelby
+E|Rolls-Royce Spectre|Rolls-Royce
+E|Rolls-Royce Boat Tail|Rolls-Royce
+E|Bentley Mulliner Batur|Bentley
+E|Maybach Exelero|Maybach
+E|Mercedes-Maybach G650 Landaulet|Maybach
+E|Brabus G-Wagon 900|Brabus
+E|Hummer H1 Alpha|Hummer
+E|Rezvani Tank|Rezvani
+E|Alfa Romeo 33 Stradale|Alfa Romeo
+E|Alpine A110|Alpine
+E|Lotus Exige Cup 430|Lotus
+E|Morgan Plus Four|Morgan
+E|Ariel Atom|Ariel
+E|BAC Mono|BAC
+R|Lamborghini Temerario|Lamborghini
+R|Lamborghini Huracan STO|Lamborghini
+R|Lamborghini Huracan Sterrato|Lamborghini
+R|Ferrari California|Ferrari
+R|Ferrari Portofino|Ferrari
+R|Ferrari 458 Italia|Ferrari
+R|Ferrari 812 GTS|Ferrari
+R|McLaren GT|McLaren
+R|McLaren 750S|McLaren
+R|Porsche 911 GT3 Touring|Porsche
+R|Porsche 718 Cayman GT4 RS|Porsche
+R|Porsche 718 Spyder RS|Porsche
+R|Porsche Cayenne Turbo GT|Porsche
+R|Porsche 930 Turbo|Porsche
+R|Aston Martin DB12|Aston Martin
+R|Aston Martin DBX707|Aston Martin
+R|Bentley Flying Spur|Bentley
+R|Rolls-Royce Ghost|Rolls-Royce
+R|Rolls-Royce Wraith|Rolls-Royce
+R|Rolls-Royce Dawn|Rolls-Royce
+R|Mercedes-AMG SL 63|Mercedes-AMG
+R|Mercedes-AMG E63 S|Mercedes-AMG
+R|Mercedes-Maybach S680|Maybach
+R|BMW M8 Competition|BMW
+R|BMW XM|BMW
+R|BMW M3 E46 CSL|BMW
+R|BMW M3 E92 GTS|BMW
+R|Audi RS7|Audi
+R|Audi RS e-tron GT|Audi
+R|Audi TT RS|Audi
+R|Nissan Skyline GT-R R34 (any)|Nissan
+R|Nissan 300ZX Twin Turbo|Nissan
+R|Nissan Silvia S15|Nissan
+R|Nissan 240SX (drift build)|Nissan
+R|Toyota Land Cruiser FJ40|Toyota
+R|Toyota AE86 Corolla|Toyota
+R|Toyota MR2 Turbo|Toyota
+R|Lexus IS F|Lexus
+R|Lexus RC F Track Edition|Lexus
+R|Honda Integra Type R (DC2)|Honda
+R|Honda Civic Type R (EK9)|Honda
+R|Acura Integra Type S|Acura
+R|Mazda RX-7 FC|Mazda
+R|Mazda RX-8 Spirit R|Mazda
+R|Mitsubishi Lancer Evo X|Mitsubishi
+R|Subaru WRX STI 22B replica|Subaru
+R|Subaru BRZ tS|Subaru
+R|Chevrolet Camaro ZL1 1LE|Chevrolet
+R|Chevrolet Corvette C6 Z06|Chevrolet
+R|Chevrolet Corvette C7 Z06|Chevrolet
+R|Chevrolet Corvette Grand Sport C4|Chevrolet
+R|Chevrolet Silverado ZR2|Chevrolet
+R|Chevrolet SSR|Chevrolet
+R|Chevrolet Impala SS (1996)|Chevrolet
+R|Ford Mustang Mach 1 (1969)|Ford
+R|Ford Mustang Dark Horse|Ford
+E|Ford Mustang GTD|Ford
+R|Ford Mustang Shelby GT350|Ford
+R|Ford Bronco (classic)|Ford
+R|Ford Bronco Raptor (Code Orange)|Ford
+R|Ford Lightning SVT (1999)|Ford
+R|Ford Focus RS|Ford
+R|Dodge Charger Hellcat Widebody|Dodge
+R|Dodge Durango SRT Hellcat|Dodge
+R|Dodge Viper SRT-10|Dodge
+R|Dodge Challenger Black Ghost|Dodge
+R|Dodge Charger Daytona EV|Dodge
+R|Jeep Wrangler Rubicon 392 Final Edition|Jeep
+R|Jeep Gladiator Mojave|Jeep
+R|Ram 1500 RHO|Ram
+R|Ram SRT-10|Ram
+R|GMC Hummer EV|GMC
+R|GMC Syclone|GMC
+R|Pontiac Firebird Trans Am (1977)|Pontiac
+R|Pontiac G8 GXP|Pontiac
+R|Cadillac CT4-V Blackwing|Cadillac
+R|Cadillac Escalade-V ESV|Cadillac
+R|Lincoln Continental (1960s suicide doors)|Lincoln
+R|Tesla Cybertruck Cyberbeast|Tesla
+R|Tesla Roadster (original)|Tesla
+R|Rivian R1T|Rivian
+R|Lucid Gravity|Lucid
+R|Polestar 1|Polestar
+R|Hyundai Ioniq 5 N|Hyundai
+R|Kia Stinger GT|Kia
+R|Genesis G70 3.3T|Genesis
+R|Volkswagen Golf R32 (MK4)|Volkswagen
+R|Volkswagen Beetle (classic, lowered)|Volkswagen
+R|Mini JCW GP|Mini
+R|Alfa Romeo Giulia Quadrifoglio|Alfa Romeo
+R|Maserati Levante Trofeo|Maserati
+R|Land Rover Defender 110 V8|Land Rover
+R|Range Rover SV|Land Rover
+R|Mercedes-Benz Sprinter 4x4 camper|Mercedes-Benz
+R|Toyota Tundra TRD Pro|Toyota
+C|Chevrolet Camaro SS|Chevrolet
+C|Chevrolet Corvette C7 Stingray|Chevrolet
+C|Chevrolet Tahoe RST|Chevrolet
+C|Ford Mustang EcoBoost|Ford
+C|Ford Mustang Mach-E GT|Ford
+C|Ford Raptor (Gen 2)|Ford
+C|Ford Maverick Lobo|Ford
+C|Dodge Charger R/T|Dodge
+C|Dodge Durango SRT 392|Dodge
+C|Dodge Hornet R/T|Dodge
+C|Jeep Grand Cherokee SRT|Jeep
+C|Jeep Wrangler 4xe|Jeep
+C|Ram 1500 TRX-look build|Ram
+C|Ram 2500 Power Wagon|Ram
+C|Toyota Supra 2.0|Toyota
+C|Toyota Tacoma TRD Pro|Toyota
+C|Toyota 4Runner TRD Pro|Toyota
+C|Lexus IS 500 F Sport|Lexus
+C|Honda Civic Si|Honda
+C|Acura TLX Type S|Acura
+C|Nissan 370Z Nismo|Nissan
+C|Nissan GT-R (any year)|Nissan
+C|Infiniti Q60 Red Sport|Infiniti
+C|Mazda MX-5 RF|Mazda
+C|Subaru WRX|Subaru
+C|Subaru BRZ|Subaru
+C|Mitsubishi Lancer Evo VIII|Mitsubishi
+C|BMW M340i|BMW
+C|BMW X5 M|BMW
+C|BMW i4 M50|BMW
+C|Mercedes-AMG A45|Mercedes-AMG
+C|Mercedes-AMG GLE 63|Mercedes-AMG
+C|Audi S4|Audi
+C|Audi RS Q8|Audi
+C|Porsche Macan GTS|Porsche
+C|Porsche Panamera GTS|Porsche
+C|Porsche Boxster GTS|Porsche
+C|Volkswagen GTI|Volkswagen
+C|Hyundai Veloster N|Hyundai
+C|Kia EV6 GT|Kia
+C|Genesis GV80|Genesis
+C|Cadillac CT5-V|Cadillac
+C|Tesla Model Y Performance|Tesla
+C|Tesla Cybertruck|Tesla
+C|Rivian R1S|Rivian
+C|Land Rover Defender 90|Land Rover
+C|Lamborghini Urus (common in LA)|Lamborghini
+C|Mercedes-AMG G63 (common in LA)|Mercedes-AMG
+C|Bentley Bentayga (common in Beverly Hills)|Bentley
+C|Lowrider (classic Impala)|Custom
+C|Lifted truck on 37s|Custom
+C|Widebody build (any)|Custom`;
+const CARS=RAW.split("\n").map((l,i)=>{const[t,n,m]=l.split("|");return{id:i,t,n,m}});
+const TOTAL=CARS.length;
+// Demo caught set (sample data)
+const caught=new Set();["Nissan Skyline GT-R R34 V-Spec","Lamborghini Huracan","Ferrari 488","Subaru WRX STI","Ford Mustang GT","Porsche 911 Carrera","Nissan GT-R R35","Lamborghini Urus","Chevrolet Corvette C8 Stingray","Dodge Charger Scat Pack","Mercedes-AMG G63","Rolls-Royce Cullinan","McLaren 720S","Tesla Model S Plaid","BMW M3","Toyota GR Supra","Ram TRX","Ford F-150 Raptor R","Honda Civic Type R","Audi R8 V10"].forEach(n=>{const c=CARS.find(x=>x.n===n);if(c)caught.add(c.id)});
+let pending=[];
+const pts=()=>[...caught].reduce((s,id)=>s+Math.round(T[CARS[id].t].p*(CARS[id]._m||1)),0)+(typeof streak!=="undefined"&&streak>=7?500:0);let checkins=0;
+
+// PIN
+const pad=document.getElementById("pad");let pin="";
+["1","2","3","4","5","6","7","8","9","","0","⌫"].forEach(k=>{const b=document.createElement("button");b.textContent=k;if(!k)b.style.visibility="hidden";b.setAttribute("aria-label",k==="⌫"?"Delete":k);b.onclick=()=>press(k);pad.appendChild(b)});
+function press(k){if(k==="⌫")pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;drawDots();if(pin.length===4){if(pin==="1234"){document.getElementById("lock").hidden=true;document.getElementById("main").hidden=false;render()}else{document.getElementById("err").textContent="Wrong PIN. Try again.";pin="";setTimeout(drawDots,250)}}}
+function drawDots(){[...document.querySelectorAll("#dots i")].forEach((d,i)=>d.classList.toggle("on",i<pin.length));if(pin.length)document.getElementById("err").textContent=""}
+document.addEventListener("keydown",e=>{if(!document.getElementById("lock").hidden){if(/^\d$/.test(e.key))press(e.key);if(e.key==="Backspace")press("⌫")}});
+
+// Gauge
+function gauge(){const c=document.getElementById("gauge"),x=c.getContext("2d"),cs=getComputedStyle(document.documentElement);x.clearRect(0,0,260,260);const a0=Math.PI*.75,span=Math.PI*1.5,f=caught.size/TOTAL;x.lineWidth=18;x.lineCap="round";x.strokeStyle=cs.getPropertyValue("--line");x.beginPath();x.arc(130,130,105,a0,a0+span);x.stroke();x.strokeStyle=cs.getPropertyValue("--accent");x.beginPath();x.arc(130,130,105,a0,a0+span*Math.max(f,.01));x.stroke();x.fillStyle=cs.getPropertyValue("--fg");x.textAlign="center";x.font="700 54px Chakra Petch, sans-serif";x.fillText(caught.size,130,140);x.fillStyle=cs.getPropertyValue("--mute");x.font="500 20px IBM Plex Mono, monospace";x.fillText("OF "+TOTAL,130,172)}
+function render(){gauge();
+  const by=t=>[...caught].filter(id=>CARS[id].t===t).length;
+  document.getElementById("stats").innerHTML=`<div class="stat"><span class="lbl">Points</span><span class="num">${pts().toLocaleString()}</span></div>`+["O","L","E","R","C"].map(t=>`<div class="stat"><span style="color:${T[t].c}">${T[t].n}</span><span class="num">${by(t)} / ${CARS.filter(c=>c.t===t).length}</span></div>`).join("");
+  list();board();rewards();checks();crewR();badgesR();streakR();document.getElementById("pts2").textContent=pts().toLocaleString()+" pts";}
+let filt="all";
+const F=[["all","All"],["O","One-of-One"],["L","Legendary"],["E","Epic"],["R","Rare"],["C","Common"],["got","Caught"],["need","Still need"]];
+document.getElementById("filters").innerHTML=F.map(([k,n])=>`<button class="chip${k==="all"?" on":""}" data-f="${k}">${n}</button>`).join("");
+document.getElementById("filters").onclick=e=>{const k=e.target.dataset.f;if(!k)return;filt=k;document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.f===k));list()};
+function list(){const order={O:0,L:1,E:2,R:3,C:4};const rows=CARS.filter(c=>filt==="all"||c.t===filt||(filt==="got"&&caught.has(c.id))||(filt==="need"&&!caught.has(c.id))).sort((a,b)=>order[a.t]-order[b.t]);
+  document.getElementById("list").innerHTML=rows.map(c=>{const g=caught.has(c.id),pe=pending.some(p=>p.id===c.id);return`<div class="car${g||pe?"":" no"}"><div class="bar" style="background:${T[c.t].c}"></div><div><div class="nm">${g||pe?c.n:c.n}</div><div class="sub">${c.m} · ${T[c.t].p.toLocaleString()} pts</div></div><span class="tag" style="color:${g?"var(--ok)":pe?"var(--legend)":T[c.t].c}">${g?"CAUGHT":pe?"PENDING":T[c.t].n.toUpperCase()}</span></div>`}).join("")+`<p class="note">${CARS.length} cars on the launch list. New drops added every month. Rare factory colors score +50%, custom builds +25%.</p>`}
+// Capture
+const pick=document.getElementById("pick");pick.innerHTML=`<option value="">Choose the car…</option>`+CARS.map(c=>`<option value="${c.id}">${c.n} (${T[c.t].n})</option>`).join("");
+let photo=null;
+document.getElementById("photo").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{photo={src:r.result,time:new Date()};const im=document.getElementById("prev");im.src=r.result;im.hidden=false;checks()};r.readAsDataURL(f)};
+pick.onchange=checks;
+function checks(){const has=!!photo,p=pick.value!=="";const rows=[[has,"Photo taken within the last 48 hours"],[has,has?"Time stamp: "+photo.time.toLocaleString():"Time stamp"],[has,"GPS location attached"],[has,"Not a screenshot or photo of a screen"],[has&&p,"AI match to selected car (runs on submit)"],[has&&p&&CARS[pick.value].t==="L","Legendary: human review queue"]];
+  document.getElementById("checks").innerHTML=rows.map(([ok,t],i)=>(i===5&&!(has&&p&&CARS[pick.value].t==="L"))?"":`<div class="check"><span style="color:${ok?"var(--ok)":"var(--mute)"}">${ok?"✓":"○"}</span><span>${t}</span></div>`).join("");
+  document.getElementById("submit").disabled=!(has&&p)}
+document.getElementById("submit").onclick=()=>{const c=CARS[pick.value];if(caught.has(c.id)){document.getElementById("pending").textContent="You already caught the "+c.n+". Duplicates don't score.";return}const mult=1+(document.getElementById("bcolor").checked?.5:0)+(document.getElementById("bcustom").checked?.25:0);c._m=mult;pending.push({id:c.id,time:photo.time});document.getElementById("pending").innerHTML=pending.map(p=>`<div class="rw"><span>${CARS[p.id].n}</span><span class="tag" style="color:var(--legend)">VERIFYING</span></div>`).join("")+`<div class="note">Demo: approves in 4 seconds.</div>`;const id=c.id;setTimeout(()=>{pending=pending.filter(p=>p.id!==id);caught.add(id);if(!today){today=true;streak++}document.getElementById("pending").textContent="Approved: "+CARS[id].n+" +"+Math.round(T[CARS[id].t].p*(CARS[id]._m||1)).toLocaleString()+" pts"+((CARS[id]._m||1)>1?" (bonus applied)":"");render()},4000);photo=null;document.getElementById("prev").hidden=true;document.getElementById("photo").value="";pick.value="";render()};
+// Leaders
+function board(){const ppl=[["CarSpotterLA",31840],["SkylineSam",22150],["ExoticHunter_OC",18420],["You",pts()],["MalibuMike",9120],["SD_Spots",7400]].sort((a,b)=>b[1]-a[1]);document.getElementById("board").innerHTML=ppl.map((p,i)=>`<div class="lb${p[0].startsWith("You")?" me":""}"><span class="num">${i+1}</span><span>${p[0]}</span><span class="num">${p[1].toLocaleString()}</span></div>`).join("")}
+// Crew
+const NAMES=["SkylineSam","MalibuMike","ExoticHunter_OC","SD_Spots","VanNuysVipers","CalabasasCam","Boost_Bri"];
+let crew=[{n:"SkylineSam",id:"00007",p:22150,top:"Nissan Skyline GT-R R34 V-Spec"},{n:"MalibuMike",id:"00019",p:9120,top:"Ferrari F40"},{n:"Boost_Bri",id:"00031",p:4380,top:"Lamborghini Huracan"}];
+function crewR(){const all=[...crew,{n:"You",id:"00001",p:pts(),top:"Nissan Skyline GT-R R34 V-Spec",me:1}].sort((a,b)=>b.p-a.p);
+document.getElementById("crew").innerHTML=all.map((c,i)=>`<div class="lb${c.me?" me":""}" ${c.me?"":`data-b="${c.id}" style="cursor:pointer"`}><span class="num">${i+1}</span><span>${c.n} <span class="pid" style="font-size:12px">#${c.id}</span></span><span class="num">${c.p.toLocaleString()}</span></div>`).join("")}
+document.getElementById("crew").onclick=e=>{const r=e.target.closest("[data-b]");if(!r)return;const c=crew.find(x=>x.id===r.dataset.b);document.getElementById("peek").innerHTML=`<div class="box" style="margin-top:8px"><div class="rw"><b>${c.n}'s garage</b><span class="num">${Math.round(c.p/120)} / 300</span></div><div class="note">Best catch: <span style="color:var(--legend)">${c.top}</span></div></div>`};
+document.getElementById("addb").onclick=()=>{const v=document.getElementById("buddy").value.replace(/\D/g,"").padStart(5,"0");const m=document.getElementById("bmsg");if(v==="00000"){m.textContent="Type their 5-digit player number first.";return}if(v==="00001"){m.textContent="That's your own number.";return}if(crew.some(c=>c.id===v)){m.textContent="#"+v+" is already in your crew.";return}const n=NAMES[parseInt(v)%NAMES.length]+"_"+v.slice(-2);crew.push({n,id:v,p:500+parseInt(v)*37%9000,top:"Ford Mustang GT"});m.textContent="Added "+n+" (#"+v+") to your crew.";document.getElementById("buddy").value="";crewR()};
+document.getElementById("copyid").onclick=e=>{navigator.clipboard?.writeText("Add me on RevCatch Cars: #00001").then(()=>e.target.textContent="Copied",()=>e.target.textContent="#00001")};
+document.getElementById("invite").onclick=async()=>{const m="I'm catching rare cars on RevCatch Cars. Add me: #00001. Join free: https://cars.revcatchparts.com",o=document.getElementById("imsg");if(navigator.share){try{await navigator.share({text:m});return}catch(e){}}try{await navigator.clipboard.writeText(m);o.textContent="Invite copied. Paste it in a text."}catch(e){o.textContent=m}};
+// Background silhouettes (generic shapes, no brands)
+function bg(){const c=document.getElementById("bgcars"),x=c.getContext("2d"),d=devicePixelRatio||1;c.width=innerWidth*d;c.height=innerHeight*d;x.scale(d,d);const cs=getComputedStyle(document.documentElement);x.clearRect(0,0,innerWidth,innerHeight);
+const g=x.createLinearGradient(0,0,0,innerHeight);g.addColorStop(0,"rgba(62,198,255,.10)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(0,0,innerWidth,innerHeight*.45);
+x.strokeStyle=cs.getPropertyValue("--line");x.lineWidth=1;for(let i=0;i<14;i++){const y=innerHeight*.62+i*i*4;x.beginPath();x.moveTo(0,y);x.lineTo(innerWidth,y);x.stroke()}
+const car=(cx,cy,s,type)=>{x.save();x.translate(cx,cy);x.scale(s,s);x.beginPath();
+ if(type===0){x.moveTo(-110,10);x.lineTo(-105,-6);x.lineTo(-40,-14);x.quadraticCurveTo(-5,-36,35,-30);x.lineTo(95,-10);x.lineTo(112,0);x.lineTo(110,12);}
+ else if(type===1){x.moveTo(-105,12);x.lineTo(-100,-12);x.lineTo(-50,-16);x.lineTo(-25,-40);x.lineTo(40,-40);x.lineTo(68,-16);x.lineTo(104,-10);x.lineTo(108,12);}
+ else {x.moveTo(-110,12);x.lineTo(-108,-10);x.quadraticCurveTo(-60,-22,-30,-24);x.quadraticCurveTo(10,-48,50,-26);x.lineTo(100,-14);x.lineTo(110,12);}
+ x.closePath();x.fillStyle=cs.getPropertyValue("--panel");x.fill();x.strokeStyle=cs.getPropertyValue("--accent");x.globalAlpha=.55;x.lineWidth=1.5/s;x.stroke();x.globalAlpha=1;x.fillStyle=cs.getPropertyValue("--bg");
+ [-62,62].forEach(w=>{x.beginPath();x.arc(w,12,15,0,7);x.fill();x.strokeStyle=cs.getPropertyValue("--silver");x.globalAlpha=.4;x.stroke();x.globalAlpha=1});x.restore()};
+const W=innerWidth,H=innerHeight;car(W*.18,H*.82,Math.min(W/700,1.1),0);car(W*.62,H*.9,Math.min(W/560,1.4),2);car(W*.9,H*.76,Math.min(W/900,.8),1)}
+addEventListener("resize",bg);bg();
+// Badges + streak + check-in
+const BADGES=[["First Catch","Catch any car",()=>caught.size>=1],["Legendary","Catch a Legendary",()=>[...caught].some(i=>CARS[i].t==="L")],["Godzilla","Catch an R34 GT-R",()=>[...caught].some(i=>/R34/.test(CARS[i].n))],["Japan Legend","R34 + Supra MK4 + NSX",()=>["R34","Supra MK4","NSX"].every(k=>[...caught].some(i=>CARS[i].n.includes(k)))],["Raging Bull","3 Lamborghinis",()=>[...caught].filter(i=>CARS[i].m==="Lamborghini").length>=3],["Prancing Horse","3 Ferraris",()=>[...caught].filter(i=>CARS[i].m==="Ferrari").length>=3],["Muscle","5 American muscle",()=>[...caught].filter(i=>["Ford","Chevrolet","Dodge","Plymouth","Pontiac","Shelby"].includes(CARS[i].m)).length>=5],["Unicorn","Catch a One-of-One",()=>[...caught].some(i=>CARS[i].t==="O")],["Week Warrior","7-day streak",()=>streak>=7],["Car Show","Check in at an event",()=>checkins>0],["Crew Boss","Add 3 buddies",()=>crew.length>=3],["Century","Catch 100 cars",()=>caught.size>=100]];
+function badgesR(){let n=0;document.getElementById("badges").innerHTML=BADGES.map(([t,d,f])=>{const ok=f();if(ok)n++;return`<div class="badge${ok?"":" no"}"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="13,2 23,7.5 23,18.5 13,24 3,18.5 3,7.5" fill="none" stroke="${ok?"var(--accent)":"var(--mute)"}" stroke-width="2"/>${ok?'<path d="M8.5 13.5l3 3 6-7" fill="none" stroke="var(--accent)" stroke-width="2"/>':""}</svg><b>${t}</b><span class="note">${d}</span></div>`}).join("");document.getElementById("bcount").textContent=n+" / "+BADGES.length}
+let streak=6,today=false;
+function streakR(){document.getElementById("streak").textContent=streak;document.getElementById("days").innerHTML=Array.from({length:7},(_,i)=>`<i class="${i<streak?"on":""}"></i>`).join("");document.getElementById("streaknote").textContent=today?(streak>=7?"7 days. +500 bonus added. Keep it going.":"Streak extended. See you tomorrow."):"Catch one car today to make it "+(streak+1)+". Day 7 pays a +500 bonus."}
+document.getElementById("checkin").onclick=e=>{if(checkins)return;checkins=1;e.target.textContent="Checked in";e.target.disabled=true;render()};
+// Rewards
+function rewards(){const R=[[2500,"10% off at repairshoplife.com"],[7500,"Free sticker pack"],[15000,"Free Repair Shop Life tee"],[50000,"Free hoodie + Legendary badge"]];const p=pts();document.getElementById("rewards").innerHTML=R.map(([n,t])=>`<div class="rw" style="border-bottom:1px solid var(--line);padding-bottom:10px"><div><div style="font-weight:600">${t}</div><div class="sub note num">${n.toLocaleString()} pts</div></div><button class="chip${p>=n?" on":""}" ${p>=n?"":"disabled"}>${p>=n?"Redeem":Math.round(p/n*100)+"%"}</button></div>`).join("")}
+// Tabs
+document.querySelector(".tabs").onclick=e=>{const t=e.target.dataset.t;if(!t)return;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["dex","cap","lb","cr","rw"].forEach(k=>document.getElementById("t-"+k).hidden=k!==t)};
+</script>
+<script src="/brand.js"></script></body></html>
