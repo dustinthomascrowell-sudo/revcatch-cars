@@ -46,7 +46,7 @@ input[type=text],input[type=tel]{width:100%;box-sizing:border-box;background:var
 .car.no{opacity:.45}.car .nm{font-weight:600}.car .sub{font-size:12px;color:var(--mute)}
 .tag{font-family:var(--mono);font-size:11px;padding:2px 7px;border-radius:4px;border:1px solid currentColor}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:12px}
-.cta{background:var(--accent);border:0;border-radius:10px;padding:13px;font-family:var(--display);font-weight:700;font-size:16px;color:#fff}
+.cta{background:var(--accent);border:0;border-radius:10px;padding:13px;font-family:var(--display);font-weight:700;font-size:16px;color:#06121a}
 .cta:disabled{opacity:.4;cursor:not-allowed}
 select,input[type=file]{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;color:var(--fg);font:inherit;box-sizing:border-box}
 .check{display:flex;gap:10px;align-items:center;font-size:14px}.check span:first-child{width:18px;text-align:center;font-family:var(--mono)}
@@ -58,6 +58,10 @@ select,input[type=file]{width:100%;background:var(--bg);border:1px solid var(--l
 .sotw{border-color:color-mix(in srgb,var(--legend) 45%,var(--line))}
 .badges{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.badge{border:1px solid var(--line);border-radius:10px;padding:10px 6px;text-align:center;display:grid;gap:4px;font-size:12px}.badge b{font-family:var(--display);font-size:13px}.badge.no{opacity:.4}.badge svg{margin:0 auto}
 .opt{display:flex;gap:8px;align-items:flex-start;font-size:14px}
+.welcome{display:grid;gap:12px;width:100%;max-width:340px}.field{display:grid;gap:6px}.field label{font-size:12px;color:var(--mute)}
+.sec{background:none;border:1px solid var(--line);border-radius:10px;padding:13px;font-family:var(--display);font-weight:700;font-size:16px}
+a.cta,a.sec{display:block;text-align:center;text-decoration:none}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--panel);border:1px solid var(--accent);color:var(--fg);padding:10px 16px;border-radius:10px;font-size:14px;z-index:20;max-width:90vw}
 .note{font-size:12px;color:var(--mute);line-height:1.5}
 @media (prefers-reduced-motion:no-preference){.car,.lb{transition:opacity .2s}}
 </style>
@@ -66,27 +70,45 @@ select,input[type=file]{width:100%;background:var(--bg);border:1px solid var(--l
 <div class="app">
 <section id="lock">
   <div class="logo"><img alt="RevCatch" data-logo src=""><span>CARS</span></div>
-  <div class="lbl" id="lockmsg">Player #00001 · enter your 4-digit PIN</div>
-  <div class="dots" id="dots"><i></i><i></i><i></i><i></i></div>
-  <div class="err" id="err"></div>
-  <div class="pad" id="pad"></div>
-  <div class="note">Demo PIN: 1234</div>
+  <div id="v-start" class="welcome">
+    <div class="lbl" style="text-align:center">The car-spotting game</div>
+    <button class="cta" id="go-join">I'm new. Get my player number</button>
+    <button class="sec" id="go-login">I have a number. Sign in</button>
+  </div>
+  <form id="v-join" class="welcome" hidden>
+    <h3 id="join-title">Join RevCatch Cars</h3>
+    <div class="field"><label for="j-name">Player name (shown on leaderboards)</label><input type="text" id="j-name" maxlength="24" autocomplete="nickname" placeholder="e.g. SkylineSam"></div>
+    <div class="field"><label for="j-phone">Phone number</label><input type="tel" id="j-phone" autocomplete="tel" placeholder="(818) 555-0100"></div>
+    <div class="field"><label for="j-fav">Favorite car</label><input type="text" id="j-fav" maxlength="60" placeholder="R34 GT-R"></div>
+    <div class="field"><label for="j-pin">Pick a 4-digit PIN</label><input type="tel" id="j-pin" inputmode="numeric" maxlength="4" placeholder="••••"></div>
+    <button class="cta" type="submit">Get my number</button>
+    <button class="sec" type="button" data-back>Back</button>
+    <div class="err" id="j-err"></div>
+  </form>
+  <div id="v-login" class="welcome" hidden>
+    <div class="field"><label for="l-no">Your player number</label><input type="tel" id="l-no" inputmode="numeric" maxlength="5" placeholder="00001"></div>
+    <div class="lbl" style="text-align:center">Enter your 4-digit PIN</div>
+    <div class="dots" id="dots" style="justify-content:center"><i></i><i></i><i></i><i></i></div>
+    <div class="err" id="err" style="text-align:center"></div>
+    <div class="pad" id="pad" style="margin:0 auto"></div>
+    <button class="sec" type="button" data-back>Back</button>
+  </div>
 </section>
 
 <section id="main" hidden>
   <div class="app">
-    <div class="rw"><div class="logo sm"><img alt="RevCatch" data-logo src=""><span>CARS</span></div><span class="lbl">You · <span class="pid">#00001</span></span></div>
+    <div class="rw"><div class="logo sm"><img alt="RevCatch" data-logo src=""><span>CARS</span></div><span class="lbl"><span id="me-name"></span> · <span class="pid" id="me-no"></span></span></div>
     <div class="hero">
       <canvas id="gauge" width="260" height="260" style="width:130px;height:130px" aria-label="Cars caught out of total"></canvas>
       <div class="stats" id="stats"></div>
     </div>
     <div class="box" style="gap:10px">
-      <div class="rw"><div><div class="lbl">Daily streak</div><div style="font-family:var(--display);font-size:22px;font-weight:700"><span id="streak">6</span> days</div></div>
+      <div class="rw"><div><div class="lbl">Daily streak</div><div style="font-family:var(--display);font-size:22px;font-weight:700"><span id="streak">0</span> <span id="dayw">days</span></div></div>
         <div class="days" id="days"></div></div>
-      <div class="note" id="streaknote">Catch one car today to make it 7. Day 7 pays a +500 bonus.</div>
+      <div class="note" id="streaknote"></div>
     </div>
     <div class="box sotw"><div class="rw"><span class="lbl" style="color:var(--legend)">Spot of the week</span><span class="tag" style="color:var(--legend)">2X POINTS</span></div>
-      <div style="font-family:var(--display);font-size:20px;font-weight:700">Porsche Carrera GT</div><div class="note">5,000 points until Sunday midnight. 3 spotted in SoCal so far.</div></div>
+      <div style="font-family:var(--display);font-size:20px;font-weight:700">Porsche Carrera GT</div><div class="note">Catch one this week and it counts in your garage. Double points switch on when events launch.</div></div>
     <div class="tabs" role="tablist">
       <button role="tab" aria-selected="true" data-t="dex">Garage</button>
       <button role="tab" aria-selected="false" data-t="cap">Capture</button>
@@ -104,55 +126,54 @@ select,input[type=file]{width:100%;background:var(--bg);border:1px solid var(--l
       <div class="box">
         <h3>Spot a car</h3>
         <label class="lbl" for="photo">1 · Take or upload photo</label>
-        <input type="file" id="photo" accept="image/*" capture="environment">
+        <input type="file" id="photo" accept="image/*">
         <img id="prev" class="prev" hidden alt="Your capture">
         <label class="lbl" for="pick">2 · What did you catch?</label>
         <select id="pick"></select>
-        <div class="lbl">3 · Bonuses (checked by AI + review)</div>
+        <div class="lbl">3 · Bonuses</div>
         <label class="opt"><input type="checkbox" id="bcolor"> Rare factory color (+50%)</label>
         <label class="opt"><input type="checkbox" id="bcustom"> Custom build: widebody, wrap, swap, lift (+25%)</label>
-        <div class="lbl">4 · Anti-cheat checks</div>
-        <div id="checks"></div>
-        <button class="cta" id="submit" disabled>Submit for verification</button>
-        <div class="note">Snapped it on your phone camera? Upload it within 48 hours. The photo's own time and location data must match, and screenshots or photos of screens are rejected. Every capture is stamped with time, GPS, and device ID, then the AI must match the car before points post. Legendary catches also get a human review.</div>
+        <button class="cta" id="submit" disabled>Add to my garage</button>
+        <div class="note">Beta rules: one photo per catch, taken within 48 hours. Passengers and parked cars only. AI photo checks are coming; until then, play fair. Duplicates don't score and there's a 15-per-hour cap.</div>
+        <div class="note" id="capmsg"></div>
       </div>
-      <div class="box"><h3>Pending review</h3><div id="pending" class="note">Nothing waiting.</div></div>
     </div>
 
     <div id="t-lb" class="app" hidden>
-      <div class="box"><div class="rw"><h3>SoCal leaderboard</h3><span class="lbl">This week</span></div><div id="board"></div>
-      <div class="note">Sample players for the demo.</div></div>
-      <div class="box"><h3>Spotted this weekend</h3>
-        <div class="car"><div class="bar" style="background:var(--legend)"></div><div><div class="nm">Cars &amp; Coffee Irvine</div><div class="sub">Sat 7am · check in for 3X points all morning</div></div><button class="chip on" id="checkin">Check in</button></div>
-        <div class="car"><div class="bar" style="background:var(--epic)"></div><div><div class="nm">Malibu PCH Sunday run</div><div class="sub">Sun morning · Epic sightings likely</div></div><span class="tag" style="color:var(--epic)">HOT</span></div>
-        <div class="note">Sample events. Real events become sponsored placements.</div>
-      </div>
+      <div class="box"><div class="rw"><h3>Leaderboard</h3><button class="chip" id="refresh">Refresh</button></div><div id="board"><div class="note">Loading…</div></div></div>
+      <div class="box"><h3>Events</h3><div class="note">Cars &amp; Coffee check-ins with triple points are coming. Know a meet? Text it in and we'll add it.</div></div>
     </div>
 
     <div id="t-cr" class="app" hidden>
-      <div class="box"><div class="rw"><h3>Your player number</h3><span class="pid num" style="font-size:22px">#00001</span></div>
-        <div class="note">Every player gets a number when they sign up. Give yours to your buddies so they can add you.</div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="chip on" id="copyid">Copy my number</button><button class="chip on" id="invite">Text a buddy an invite</button></div><div class="note" id="imsg"></div></div>
+      <div class="box"><div class="rw"><h3>Your player number</h3><span class="pid num" style="font-size:22px" id="me-no2"></span></div>
+        <div class="note">Text your number to friends. When they join, they add you and you're on each other's crew board.</div>
+        <a class="cta" id="sms" href="sms:">Text a buddy an invite</a>
+        <button class="sec" id="share">Share another way</button>
+        <div class="note" id="imsg"></div></div>
       <div class="box"><h3>Add a buddy</h3>
         <label class="lbl" for="buddy">Their player number</label>
-        <input type="tel" id="buddy" placeholder="e.g. 00042" inputmode="numeric" maxlength="5">
+        <input type="tel" id="buddy" placeholder="e.g. 00002" inputmode="numeric" maxlength="5">
         <button class="cta" id="addb">Add to my crew</button><div class="note" id="bmsg"></div></div>
-      <div class="box"><div class="rw"><h3>Crew leaderboard</h3><span class="lbl">All time</span></div><div id="crew"></div>
-        <div class="note">Sample buddies for the demo. Tap a name to see their garage.</div><div id="peek"></div></div>
+      <div class="box"><div class="rw"><h3>Crew leaderboard</h3><span class="lbl">All time</span></div><div id="crew"></div><div id="peek"></div></div>
     </div>
 
     <div id="t-rw" class="app" hidden>
       <div class="box"><div class="rw"><h3>Badges</h3><span class="lbl" id="bcount"></span></div><div class="badges" id="badges"></div></div>
       <div class="box"><div class="rw"><h3>Your points</h3><span class="num" id="pts2" style="font-size:22px"></span></div>
       <div id="rewards"></div>
-      <div class="note">Rewards redeem as codes on repairshoplife.com. Sponsor perks slot in here as advertisers sign on.</div></div>
+      <div class="note">Unlocked a reward? Screenshot this screen and DM Repair Shop Life on Instagram with your player number to get your code.</div></div>
+      <button class="sec" id="signout">Sign out of this phone</button>
     </div>
   </div>
 </section>
 </div>
+<div class="toast" id="toast" hidden></div>
 
 <script>
+const SB="https://hmfgxxmrrpknjpiqciru.supabase.co/rest/v1/rpc/",KEY="sb_publishable_uS4a9iqB3eS3Lya8B21NGw_fozLbuVF",SITE="https://cars.revcatchparts.com";
+async function rpc(fn,body){const r=await fetch(SB+fn,{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify(body||{})});const t=await r.text();let j;try{j=JSON.parse(t)}catch(e){j=t}if(!r.ok)throw new Error((j&&j.message)||"Something went wrong. Try again.");return j}
 const T={O:{n:"One-of-One",p:10000,c:"var(--one)"},C:{n:"Common",p:10,c:"var(--common)"},R:{n:"Rare",p:100,c:"var(--rare)"},E:{n:"Epic",p:500,c:"var(--epic)"},L:{n:"Legendary",p:2500,c:"var(--legend)"}};
+// Car ids are list positions. Only ever ADD new cars to the end of this list.
 const RAW=`L|Bugatti Chiron|Bugatti
 L|Bugatti Veyron|Bugatti
 L|Koenigsegg Jesko|Koenigsegg
@@ -525,71 +546,108 @@ C|Lifted truck on 37s|Custom
 C|Widebody build (any)|Custom`;
 const CARS=RAW.split("\n").map((l,i)=>{const[t,n,m]=l.split("|");return{id:i,t,n,m}});
 const TOTAL=CARS.length;
-// Demo caught set (sample data)
-const caught=new Set();["Nissan Skyline GT-R R34 V-Spec","Lamborghini Huracan","Ferrari 488","Subaru WRX STI","Ford Mustang GT","Porsche 911 Carrera","Nissan GT-R R35","Lamborghini Urus","Chevrolet Corvette C8 Stingray","Dodge Charger Scat Pack","Mercedes-AMG G63","Rolls-Royce Cullinan","McLaren 720S","Tesla Model S Plaid","BMW M3","Toyota GR Supra","Ram TRX","Ford F-150 Raptor R","Honda Civic Type R","Audi R8 V10"].forEach(n=>{const c=CARS.find(x=>x.n===n);if(c)caught.add(c.id)});
-let pending=[];
-const pts=()=>[...caught].reduce((s,id)=>s+Math.round(T[CARS[id].t].p*(CARS[id]._m||1)),0)+(typeof streak!=="undefined"&&streak>=7?500:0);let checkins=0;
+const $=id=>document.getElementById(id);
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const pad5=n=>String(n).padStart(5,"0");
+let me=null,caught=new Map(),token=store.get("rc_token");
+function toast(m){const t=$("toast");t.textContent=m;t.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>t.hidden=true,3500)}
+const claim=new URLSearchParams(location.search).get("claim");
+const ref=new URLSearchParams(location.search).get("ref");
 
-// PIN
-const pad=document.getElementById("pad");let pin="";
-["1","2","3","4","5","6","7","8","9","","0","⌫"].forEach(k=>{const b=document.createElement("button");b.textContent=k;if(!k)b.style.visibility="hidden";b.setAttribute("aria-label",k==="⌫"?"Delete":k);b.onclick=()=>press(k);pad.appendChild(b)});
-function press(k){if(k==="⌫")pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;drawDots();if(pin.length===4){if(pin==="1234"){document.getElementById("lock").hidden=true;document.getElementById("main").hidden=false;render()}else{document.getElementById("err").textContent="Wrong PIN. Try again.";pin="";setTimeout(drawDots,250)}}}
-function drawDots(){[...document.querySelectorAll("#dots i")].forEach((d,i)=>d.classList.toggle("on",i<pin.length));if(pin.length)document.getElementById("err").textContent=""}
-document.addEventListener("keydown",e=>{if(!document.getElementById("lock").hidden){if(/^\d$/.test(e.key))press(e.key);if(e.key==="Backspace")press("⌫")}});
+// ---- Start / join / login
+function view(v){["v-start","v-join","v-login"].forEach(k=>$(k).hidden=k!==v)}
+$("go-join").onclick=()=>{view("v-join");$("j-name").focus()};
+$("go-login").onclick=()=>{view("v-login");$("l-no").focus()};
+document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>view("v-start"));
+if(claim){$("join-title").textContent="Claim your reserved player number";view("v-join")}
+$("v-join").onsubmit=async e=>{e.preventDefault();const err=$("j-err");err.textContent="";
+  const pin=$("j-pin").value.trim();if(!/^\d{4}$/.test(pin)){err.textContent="PIN must be 4 digits.";return}
+  try{const r=await rpc("cars_signup",{p_name:$("j-name").value,p_phone:$("j-phone").value,p_fav:$("j-fav").value,p_pin:pin,p_claim:claim||null});
+    token=r.token;store.set("rc_token",token);store.set("rc_no",r.player_no);
+    if(claim)history.replaceState(null,"",location.pathname);
+    await load();toast("You're player #"+pad5(r.player_no)+". Remember your PIN.");
+    if(ref&&+ref!==r.player_no){try{await rpc("cars_add_buddy",{p_token:token,p_buddy:+ref});await load()}catch(e){}}
+  }catch(x){err.textContent=x.message}};
+const padEl=$("pad");let pin="";
+if(store.get("rc_no"))$("l-no").value=pad5(store.get("rc_no"));
+["1","2","3","4","5","6","7","8","9","","0","⌫"].forEach(k=>{const b=document.createElement("button");b.type="button";b.textContent=k;if(!k)b.style.visibility="hidden";b.setAttribute("aria-label",k==="⌫"?"Delete":k);b.onclick=()=>press(k);padEl.appendChild(b)});
+async function press(k){if(k==="⌫")pin=pin.slice(0,-1);else if(pin.length<4)pin+=k;dots();
+  if(pin.length===4){const no=parseInt($("l-no").value.replace(/\D/g,""),10);const p=pin;pin="";
+    if(!no){$("err").textContent="Type your player number first.";dots();return}
+    try{const r=await rpc("cars_login",{p_no:no,p_pin:p});token=r.token;store.set("rc_token",token);store.set("rc_no",no);await load()}
+    catch(x){$("err").textContent=x.message;dots()}}}
+function dots(){[...document.querySelectorAll("#dots i")].forEach((d,i)=>d.classList.toggle("on",i<pin.length));if(pin.length)$("err").textContent=""}
 
-// Gauge
-function gauge(){const c=document.getElementById("gauge"),x=c.getContext("2d"),cs=getComputedStyle(document.documentElement);x.clearRect(0,0,260,260);const a0=Math.PI*.75,span=Math.PI*1.5,f=caught.size/TOTAL;x.lineWidth=18;x.lineCap="round";x.strokeStyle=cs.getPropertyValue("--line");x.beginPath();x.arc(130,130,105,a0,a0+span);x.stroke();x.strokeStyle=cs.getPropertyValue("--accent");x.beginPath();x.arc(130,130,105,a0,a0+span*Math.max(f,.01));x.stroke();x.fillStyle=cs.getPropertyValue("--fg");x.textAlign="center";x.font="700 54px Chakra Petch, sans-serif";x.fillText(caught.size,130,140);x.fillStyle=cs.getPropertyValue("--mute");x.font="500 20px IBM Plex Mono, monospace";x.fillText("OF "+TOTAL,130,172)}
+async function load(){
+  try{me=await rpc("cars_me",{p_token:token})}catch(x){store.del("rc_token");token=null;$("lock").hidden=false;$("main").hidden=true;view("v-login");$("err").textContent=x.message;return}
+  caught=new Map(me.catches.map(c=>[c.car_id,c]));
+  $("lock").hidden=true;$("main").hidden=false;
+  $("me-name").textContent=me.name;$("me-no").textContent="#"+pad5(me.player_no);$("me-no2").textContent="#"+pad5(me.player_no);
+  const msg="I'm catching rare cars on RevCatch Cars. I'm #"+pad5(me.player_no)+". Join free and add me: "+SITE+"/app/?ref="+me.player_no;
+  $("sms").href="sms:?&body="+encodeURIComponent(msg);$("share").dataset.msg=msg;
+  render()}
+
+// ---- Render
+function streakCalc(){const days=new Set((me.days||[]).map(String));const d=new Date();const iso=x=>x.toLocaleDateString("en-CA",{timeZone:"America/Los_Angeles"});
+  let n=0,today=days.has(iso(d));if(!today)d.setDate(d.getDate()-1);while(days.has(iso(d))){n++;d.setDate(d.getDate()-1)}return{n,today}}
+function gauge(){const c=$("gauge"),x=c.getContext("2d"),cs=getComputedStyle(document.documentElement);x.clearRect(0,0,260,260);const a0=Math.PI*.75,span=Math.PI*1.5,f=caught.size/TOTAL;x.lineWidth=18;x.lineCap="round";x.strokeStyle=cs.getPropertyValue("--line");x.beginPath();x.arc(130,130,105,a0,a0+span);x.stroke();x.strokeStyle=cs.getPropertyValue("--accent");x.beginPath();x.arc(130,130,105,a0,a0+span*Math.max(f,.01));x.stroke();x.fillStyle=cs.getPropertyValue("--fg");x.textAlign="center";x.font="700 54px Chakra Petch, sans-serif";x.fillText(caught.size,130,140);x.fillStyle=cs.getPropertyValue("--mute");x.font="500 20px IBM Plex Mono, monospace";x.fillText("OF "+TOTAL,130,172)}
 function render(){gauge();
-  const by=t=>[...caught].filter(id=>CARS[id].t===t).length;
-  document.getElementById("stats").innerHTML=`<div class="stat"><span class="lbl">Points</span><span class="num">${pts().toLocaleString()}</span></div>`+["O","L","E","R","C"].map(t=>`<div class="stat"><span style="color:${T[t].c}">${T[t].n}</span><span class="num">${by(t)} / ${CARS.filter(c=>c.t===t).length}</span></div>`).join("");
-  list();board();rewards();checks();crewR();badgesR();streakR();document.getElementById("pts2").textContent=pts().toLocaleString()+" pts";}
+  const by=t=>[...caught.keys()].filter(id=>CARS[id]&&CARS[id].t===t).length;
+  $("stats").innerHTML=`<div class="stat"><span class="lbl">Points</span><span class="num">${(+me.points).toLocaleString()}</span></div>`+["O","L","E","R","C"].map(t=>`<div class="stat"><span style="color:${T[t].c}">${T[t].n}</span><span class="num">${by(t)} / ${CARS.filter(c=>c.t===t).length}</span></div>`).join("");
+  const s=streakCalc();$("streak").textContent=s.n;$("dayw").textContent=s.n===1?"day":"days";$("days").innerHTML=Array.from({length:7},(_,i)=>`<i class="${i<Math.min(s.n,7)?"on":""}"></i>`).join("");
+  $("streaknote").textContent=s.today?"You caught one today. Come back tomorrow to keep it going.":(s.n?"Catch one today to make it "+(s.n+1)+".":"Catch a car today to start your streak.");
+  list();crewR();badgesR();rewards();$("pts2").textContent=(+me.points).toLocaleString()+" pts"}
 let filt="all";
 const F=[["all","All"],["O","One-of-One"],["L","Legendary"],["E","Epic"],["R","Rare"],["C","Common"],["got","Caught"],["need","Still need"]];
-document.getElementById("filters").innerHTML=F.map(([k,n])=>`<button class="chip${k==="all"?" on":""}" data-f="${k}">${n}</button>`).join("");
-document.getElementById("filters").onclick=e=>{const k=e.target.dataset.f;if(!k)return;filt=k;document.querySelectorAll(".chip").forEach(c=>c.classList.toggle("on",c.dataset.f===k));list()};
+$("filters").innerHTML=F.map(([k,n])=>`<button class="chip${k==="all"?" on":""}" data-f="${k}">${n}</button>`).join("");
+$("filters").onclick=e=>{const k=e.target.dataset.f;if(!k)return;filt=k;document.querySelectorAll("#filters .chip").forEach(c=>c.classList.toggle("on",c.dataset.f===k));list()};
 function list(){const order={O:0,L:1,E:2,R:3,C:4};const rows=CARS.filter(c=>filt==="all"||c.t===filt||(filt==="got"&&caught.has(c.id))||(filt==="need"&&!caught.has(c.id))).sort((a,b)=>order[a.t]-order[b.t]);
-  document.getElementById("list").innerHTML=rows.map(c=>{const g=caught.has(c.id),pe=pending.some(p=>p.id===c.id);return`<div class="car${g||pe?"":" no"}"><div class="bar" style="background:${T[c.t].c}"></div><div><div class="nm">${g||pe?c.n:c.n}</div><div class="sub">${c.m} · ${T[c.t].p.toLocaleString()} pts</div></div><span class="tag" style="color:${g?"var(--ok)":pe?"var(--legend)":T[c.t].c}">${g?"CAUGHT":pe?"PENDING":T[c.t].n.toUpperCase()}</span></div>`}).join("")+`<p class="note">${CARS.length} cars on the launch list. New drops added every month. Rare factory colors score +50%, custom builds +25%.</p>`}
-// Capture
-const pick=document.getElementById("pick");pick.innerHTML=`<option value="">Choose the car…</option>`+CARS.map(c=>`<option value="${c.id}">${c.n} (${T[c.t].n})</option>`).join("");
+  $("list").innerHTML=rows.map(c=>{const g=caught.get(c.id);return`<div class="car${g?"":" no"}"><div class="bar" style="background:${T[c.t].c}"></div><div><div class="nm">${c.n}</div><div class="sub">${c.m} · ${g?(+g.points).toLocaleString()+" pts earned":T[c.t].p.toLocaleString()+" pts"}</div></div><span class="tag" style="color:${g?"var(--ok)":T[c.t].c}">${g?"CAUGHT":T[c.t].n.toUpperCase()}</span></div>`}).join("")+`<p class="note">${TOTAL} cars on the launch list. New drops added every month.</p>`}
+
+// ---- Capture
+const pick=$("pick");pick.innerHTML=`<option value="">Choose the car…</option>`+CARS.map(c=>`<option value="${c.id}">${c.n} (${T[c.t].n})</option>`).join("");
 let photo=null;
-document.getElementById("photo").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{photo={src:r.result,time:new Date()};const im=document.getElementById("prev");im.src=r.result;im.hidden=false;checks()};r.readAsDataURL(f)};
-pick.onchange=checks;
-function checks(){const has=!!photo,p=pick.value!=="";const rows=[[has,"Photo taken within the last 48 hours"],[has,has?"Time stamp: "+photo.time.toLocaleString():"Time stamp"],[has,"GPS location attached"],[has,"Not a screenshot or photo of a screen"],[has&&p,"AI match to selected car (runs on submit)"],[has&&p&&CARS[pick.value].t==="L","Legendary: human review queue"]];
-  document.getElementById("checks").innerHTML=rows.map(([ok,t],i)=>(i===5&&!(has&&p&&CARS[pick.value].t==="L"))?"":`<div class="check"><span style="color:${ok?"var(--ok)":"var(--mute)"}">${ok?"✓":"○"}</span><span>${t}</span></div>`).join("");
-  document.getElementById("submit").disabled=!(has&&p)}
-document.getElementById("submit").onclick=()=>{const c=CARS[pick.value];if(caught.has(c.id)){document.getElementById("pending").textContent="You already caught the "+c.n+". Duplicates don't score.";return}const mult=1+(document.getElementById("bcolor").checked?.5:0)+(document.getElementById("bcustom").checked?.25:0);c._m=mult;pending.push({id:c.id,time:photo.time});document.getElementById("pending").innerHTML=pending.map(p=>`<div class="rw"><span>${CARS[p.id].n}</span><span class="tag" style="color:var(--legend)">VERIFYING</span></div>`).join("")+`<div class="note">Demo: approves in 4 seconds.</div>`;const id=c.id;setTimeout(()=>{pending=pending.filter(p=>p.id!==id);caught.add(id);if(!today){today=true;streak++}document.getElementById("pending").textContent="Approved: "+CARS[id].n+" +"+Math.round(T[CARS[id].t].p*(CARS[id]._m||1)).toLocaleString()+" pts"+((CARS[id]._m||1)>1?" (bonus applied)":"");render()},4000);photo=null;document.getElementById("prev").hidden=true;document.getElementById("photo").value="";pick.value="";render()};
-// Leaders
-function board(){const ppl=[["CarSpotterLA",31840],["SkylineSam",22150],["ExoticHunter_OC",18420],["You",pts()],["MalibuMike",9120],["SD_Spots",7400]].sort((a,b)=>b[1]-a[1]);document.getElementById("board").innerHTML=ppl.map((p,i)=>`<div class="lb${p[0].startsWith("You")?" me":""}"><span class="num">${i+1}</span><span>${p[0]}</span><span class="num">${p[1].toLocaleString()}</span></div>`).join("")}
-// Crew
-const NAMES=["SkylineSam","MalibuMike","ExoticHunter_OC","SD_Spots","VanNuysVipers","CalabasasCam","Boost_Bri"];
-let crew=[{n:"SkylineSam",id:"00007",p:22150,top:"Nissan Skyline GT-R R34 V-Spec"},{n:"MalibuMike",id:"00019",p:9120,top:"Ferrari F40"},{n:"Boost_Bri",id:"00031",p:4380,top:"Lamborghini Huracan"}];
-function crewR(){const all=[...crew,{n:"You",id:"00001",p:pts(),top:"Nissan Skyline GT-R R34 V-Spec",me:1}].sort((a,b)=>b.p-a.p);
-document.getElementById("crew").innerHTML=all.map((c,i)=>`<div class="lb${c.me?" me":""}" ${c.me?"":`data-b="${c.id}" style="cursor:pointer"`}><span class="num">${i+1}</span><span>${c.n} <span class="pid" style="font-size:12px">#${c.id}</span></span><span class="num">${c.p.toLocaleString()}</span></div>`).join("")}
-document.getElementById("crew").onclick=e=>{const r=e.target.closest("[data-b]");if(!r)return;const c=crew.find(x=>x.id===r.dataset.b);document.getElementById("peek").innerHTML=`<div class="box" style="margin-top:8px"><div class="rw"><b>${c.n}'s garage</b><span class="num">${Math.round(c.p/120)} / 300</span></div><div class="note">Best catch: <span style="color:var(--legend)">${c.top}</span></div></div>`};
-document.getElementById("addb").onclick=()=>{const v=document.getElementById("buddy").value.replace(/\D/g,"").padStart(5,"0");const m=document.getElementById("bmsg");if(v==="00000"){m.textContent="Type their 5-digit player number first.";return}if(v==="00001"){m.textContent="That's your own number.";return}if(crew.some(c=>c.id===v)){m.textContent="#"+v+" is already in your crew.";return}const n=NAMES[parseInt(v)%NAMES.length]+"_"+v.slice(-2);crew.push({n,id:v,p:500+parseInt(v)*37%9000,top:"Ford Mustang GT"});m.textContent="Added "+n+" (#"+v+") to your crew.";document.getElementById("buddy").value="";crewR()};
-document.getElementById("copyid").onclick=e=>{navigator.clipboard?.writeText("Add me on RevCatch Cars: #00001").then(()=>e.target.textContent="Copied",()=>e.target.textContent="#00001")};
-document.getElementById("invite").onclick=async()=>{const m="I'm catching rare cars on RevCatch Cars. Add me: #00001. Join free: https://cars.revcatchparts.com",o=document.getElementById("imsg");if(navigator.share){try{await navigator.share({text:m});return}catch(e){}}try{await navigator.clipboard.writeText(m);o.textContent="Invite copied. Paste it in a text."}catch(e){o.textContent=m}};
-// Background silhouettes (generic shapes, no brands)
-function bg(){const c=document.getElementById("bgcars"),x=c.getContext("2d"),d=devicePixelRatio||1;c.width=innerWidth*d;c.height=innerHeight*d;x.scale(d,d);const cs=getComputedStyle(document.documentElement);x.clearRect(0,0,innerWidth,innerHeight);
+$("photo").onchange=e=>{const f=e.target.files[0];if(!f){photo=null;chk();return}
+  if(Date.now()-f.lastModified>48*3600e3){$("capmsg").textContent="That photo is more than 48 hours old. Catches have to be fresh.";photo=null;chk();return}
+  const r=new FileReader();r.onload=()=>{photo=r.result;$("prev").src=r.result;$("prev").hidden=false;$("capmsg").textContent="";chk()};r.readAsDataURL(f)};
+pick.onchange=chk;function chk(){$("submit").disabled=!(photo&&pick.value!=="")}
+$("submit").onclick=async()=>{const c=CARS[pick.value];$("submit").disabled=true;
+  try{const r=await rpc("cars_catch",{p_token:token,p_car_id:c.id,p_car_name:c.n,p_tier:c.t,p_color:$("bcolor").checked,p_custom:$("bcustom").checked});
+    $("capmsg").textContent="Caught: "+c.n+" +"+(+r.points).toLocaleString()+" pts";toast(c.n+" added. +"+(+r.points).toLocaleString()+" pts");
+    photo=null;$("prev").hidden=true;$("photo").value="";pick.value="";$("bcolor").checked=false;$("bcustom").checked=false;await load()}
+  catch(x){$("capmsg").textContent=x.message;chk()}};
+
+// ---- Leaders
+async function board(){try{const b=await rpc("cars_board");$("board").innerHTML=b.length?b.map((p,i)=>`<div class="lb${p.player_no===me.player_no?" me":""}"><span class="num">${i+1}</span><span>${esc(p.name)} <span class="pid" style="font-size:12px">#${pad5(p.player_no)}</span></span><span class="num">${(+p.points).toLocaleString()}</span></div>`).join(""):'<div class="note">No players yet.</div>'}catch(x){$("board").innerHTML='<div class="note">'+esc(x.message)+'</div>'}}
+$("refresh").onclick=board;
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// ---- Crew
+function crewR(){const all=[...me.crew,{player_no:me.player_no,name:me.name,points:me.points,me:1}].sort((a,b)=>b.points-a.points);
+  $("crew").innerHTML=(me.crew.length?"":'<div class="note">No buddies yet. Text your number to a friend.</div>')+all.map((c,i)=>`<div class="lb${c.me?" me":""}" ${c.me?"":`data-b="${c.player_no}" style="cursor:pointer"`}><span class="num">${i+1}</span><span>${esc(c.me?"You":c.name)} <span class="pid" style="font-size:12px">#${pad5(c.player_no)}</span></span><span class="num">${(+c.points).toLocaleString()}</span></div>`).join("")}
+$("crew").onclick=e=>{const r=e.target.closest("[data-b]");if(!r)return;const c=me.crew.find(x=>x.player_no==r.dataset.b);$("peek").innerHTML=`<div class="box" style="margin-top:8px"><div class="rw"><b>${esc(c.name)}'s garage</b><span class="num">${c.count} / ${TOTAL}</span></div><div class="note">Best catch: <span style="color:var(--legend)">${esc(c.best||"none yet")}</span></div></div>`};
+$("addb").onclick=async()=>{const v=parseInt($("buddy").value.replace(/\D/g,""),10),m=$("bmsg");if(!v){m.textContent="Type their player number first.";return}
+  try{const r=await rpc("cars_add_buddy",{p_token:token,p_buddy:v});m.textContent="Added "+r.name+" (#"+pad5(v)+") to your crew.";$("buddy").value="";await load()}catch(x){m.textContent=x.message}};
+$("share").onclick=async()=>{const m=$("share").dataset.msg,o=$("imsg");if(navigator.share){try{await navigator.share({text:m});return}catch(e){if(e.name==="AbortError")return}}
+  try{await navigator.clipboard.writeText(m);o.textContent="Invite copied. Paste it anywhere."}catch(e){o.textContent=m}};
+
+// ---- Badges + rewards
+const has=f=>[...caught.keys()].some(i=>CARS[i]&&f(CARS[i])),cnt=f=>[...caught.keys()].filter(i=>CARS[i]&&f(CARS[i])).length;
+const BADGES=[["First Catch","Catch any car",()=>caught.size>=1],["Legendary","Catch a Legendary",()=>has(c=>c.t==="L")],["Godzilla","Catch an R34 GT-R",()=>has(c=>/R34/.test(c.n))],["Japan Legend","R34 + Supra MK4 + NSX",()=>["R34","Supra MK4","NSX"].every(k=>has(c=>c.n.includes(k)))],["Raging Bull","3 Lamborghinis",()=>cnt(c=>c.m==="Lamborghini")>=3],["Prancing Horse","3 Ferraris",()=>cnt(c=>c.m==="Ferrari")>=3],["Muscle","5 American muscle",()=>cnt(c=>["Ford","Chevrolet","Dodge","Plymouth","Pontiac","Shelby"].includes(c.m))>=5],["Unicorn","Catch a One-of-One",()=>has(c=>c.t==="O")],["Week Warrior","7-day streak",()=>streakCalc().n>=7],["Crew Boss","Add 3 buddies",()=>me.crew.length>=3],["Half Century","Catch 50 cars",()=>caught.size>=50],["Century","Catch 100 cars",()=>caught.size>=100]];
+function badgesR(){let n=0;$("badges").innerHTML=BADGES.map(([t,d,f])=>{const ok=f();if(ok)n++;return`<div class="badge${ok?"":" no"}"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="13,2 23,7.5 23,18.5 13,24 3,18.5 3,7.5" fill="none" stroke="${ok?"var(--accent)":"var(--mute)"}" stroke-width="2"/>${ok?'<path d="M8.5 13.5l3 3 6-7" fill="none" stroke="var(--accent)" stroke-width="2"/>':""}</svg><b>${t}</b><span class="note">${d}</span></div>`}).join("");$("bcount").textContent=n+" / "+BADGES.length}
+function rewards(){const R=[[2500,"10% off at Repair Shop Life"],[7500,"Sticker pack"],[15000,"Free Repair Shop Life tee"],[50000,"Hoodie + Legendary badge"]];const p=+me.points;
+  $("rewards").innerHTML=R.map(([n,t])=>{const ok=p>=n;return`<div class="rw" style="border-bottom:1px solid var(--line);padding-bottom:10px"><div><div style="font-weight:600">${t}</div><div class="note num">${n.toLocaleString()} pts</div></div>${ok?`<span class="chip on" style="color:var(--ok)">Unlocked</span>`:`<span class="chip">${Math.floor(p/n*100)}%</span>`}</div>`}).join("")}
+$("signout").onclick=()=>{store.del("rc_token");token=null;me=null;$("main").hidden=true;$("lock").hidden=false;view("v-login")};
+
+// ---- Tabs
+document.querySelector(".tabs").onclick=e=>{const t=e.target.dataset.t;if(!t)return;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["dex","cap","lb","cr","rw"].forEach(k=>$("t-"+k).hidden=k!==t);if(t==="lb")board()};
+
+// ---- Background
+function bg(){const c=$("bgcars"),x=c.getContext("2d"),d=devicePixelRatio||1;c.width=innerWidth*d;c.height=innerHeight*d;x.scale(d,d);const cs=getComputedStyle(document.documentElement);x.clearRect(0,0,innerWidth,innerHeight);
 const g=x.createLinearGradient(0,0,0,innerHeight);g.addColorStop(0,"rgba(62,198,255,.10)");g.addColorStop(1,"rgba(0,0,0,0)");x.fillStyle=g;x.fillRect(0,0,innerWidth,innerHeight*.45);
-x.strokeStyle=cs.getPropertyValue("--line");x.lineWidth=1;for(let i=0;i<14;i++){const y=innerHeight*.62+i*i*4;x.beginPath();x.moveTo(0,y);x.lineTo(innerWidth,y);x.stroke()}
-const car=(cx,cy,s,type)=>{x.save();x.translate(cx,cy);x.scale(s,s);x.beginPath();
- if(type===0){x.moveTo(-110,10);x.lineTo(-105,-6);x.lineTo(-40,-14);x.quadraticCurveTo(-5,-36,35,-30);x.lineTo(95,-10);x.lineTo(112,0);x.lineTo(110,12);}
- else if(type===1){x.moveTo(-105,12);x.lineTo(-100,-12);x.lineTo(-50,-16);x.lineTo(-25,-40);x.lineTo(40,-40);x.lineTo(68,-16);x.lineTo(104,-10);x.lineTo(108,12);}
- else {x.moveTo(-110,12);x.lineTo(-108,-10);x.quadraticCurveTo(-60,-22,-30,-24);x.quadraticCurveTo(10,-48,50,-26);x.lineTo(100,-14);x.lineTo(110,12);}
- x.closePath();x.fillStyle=cs.getPropertyValue("--panel");x.fill();x.strokeStyle=cs.getPropertyValue("--accent");x.globalAlpha=.55;x.lineWidth=1.5/s;x.stroke();x.globalAlpha=1;x.fillStyle=cs.getPropertyValue("--bg");
- [-62,62].forEach(w=>{x.beginPath();x.arc(w,12,15,0,7);x.fill();x.strokeStyle=cs.getPropertyValue("--silver");x.globalAlpha=.4;x.stroke();x.globalAlpha=1});x.restore()};
-const W=innerWidth,H=innerHeight;car(W*.18,H*.82,Math.min(W/700,1.1),0);car(W*.62,H*.9,Math.min(W/560,1.4),2);car(W*.9,H*.76,Math.min(W/900,.8),1)}
+x.strokeStyle=cs.getPropertyValue("--line");x.lineWidth=1;for(let i=0;i<14;i++){const y=innerHeight*.62+i*i*4;x.beginPath();x.moveTo(0,y);x.lineTo(innerWidth,y);x.stroke()}}
 addEventListener("resize",bg);bg();
-// Badges + streak + check-in
-const BADGES=[["First Catch","Catch any car",()=>caught.size>=1],["Legendary","Catch a Legendary",()=>[...caught].some(i=>CARS[i].t==="L")],["Godzilla","Catch an R34 GT-R",()=>[...caught].some(i=>/R34/.test(CARS[i].n))],["Japan Legend","R34 + Supra MK4 + NSX",()=>["R34","Supra MK4","NSX"].every(k=>[...caught].some(i=>CARS[i].n.includes(k)))],["Raging Bull","3 Lamborghinis",()=>[...caught].filter(i=>CARS[i].m==="Lamborghini").length>=3],["Prancing Horse","3 Ferraris",()=>[...caught].filter(i=>CARS[i].m==="Ferrari").length>=3],["Muscle","5 American muscle",()=>[...caught].filter(i=>["Ford","Chevrolet","Dodge","Plymouth","Pontiac","Shelby"].includes(CARS[i].m)).length>=5],["Unicorn","Catch a One-of-One",()=>[...caught].some(i=>CARS[i].t==="O")],["Week Warrior","7-day streak",()=>streak>=7],["Car Show","Check in at an event",()=>checkins>0],["Crew Boss","Add 3 buddies",()=>crew.length>=3],["Century","Catch 100 cars",()=>caught.size>=100]];
-function badgesR(){let n=0;document.getElementById("badges").innerHTML=BADGES.map(([t,d,f])=>{const ok=f();if(ok)n++;return`<div class="badge${ok?"":" no"}"><svg width="26" height="26" viewBox="0 0 26 26"><polygon points="13,2 23,7.5 23,18.5 13,24 3,18.5 3,7.5" fill="none" stroke="${ok?"var(--accent)":"var(--mute)"}" stroke-width="2"/>${ok?'<path d="M8.5 13.5l3 3 6-7" fill="none" stroke="var(--accent)" stroke-width="2"/>':""}</svg><b>${t}</b><span class="note">${d}</span></div>`}).join("");document.getElementById("bcount").textContent=n+" / "+BADGES.length}
-let streak=6,today=false;
-function streakR(){document.getElementById("streak").textContent=streak;document.getElementById("days").innerHTML=Array.from({length:7},(_,i)=>`<i class="${i<streak?"on":""}"></i>`).join("");document.getElementById("streaknote").textContent=today?(streak>=7?"7 days. +500 bonus added. Keep it going.":"Streak extended. See you tomorrow."):"Catch one car today to make it "+(streak+1)+". Day 7 pays a +500 bonus."}
-document.getElementById("checkin").onclick=e=>{if(checkins)return;checkins=1;e.target.textContent="Checked in";e.target.disabled=true;render()};
-// Rewards
-function rewards(){const R=[[2500,"10% off at repairshoplife.com"],[7500,"Free sticker pack"],[15000,"Free Repair Shop Life tee"],[50000,"Free hoodie + Legendary badge"]];const p=pts();document.getElementById("rewards").innerHTML=R.map(([n,t])=>`<div class="rw" style="border-bottom:1px solid var(--line);padding-bottom:10px"><div><div style="font-weight:600">${t}</div><div class="sub note num">${n.toLocaleString()} pts</div></div><button class="chip${p>=n?" on":""}" ${p>=n?"":"disabled"}>${p>=n?"Redeem":Math.round(p/n*100)+"%"}</button></div>`).join("")}
-// Tabs
-document.querySelector(".tabs").onclick=e=>{const t=e.target.dataset.t;if(!t)return;document.querySelectorAll(".tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.t===t));["dex","cap","lb","cr","rw"].forEach(k=>document.getElementById("t-"+k).hidden=k!==t)};
+
+if(token&&!claim)load();
 </script>
 <script src="/brand.js"></script></body></html>
