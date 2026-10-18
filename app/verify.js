@@ -49,3 +49,39 @@
     r.readAsDataURL(f);
   }, true);
 })();
+
+/* Search + A-Z: car picker and garage list */
+(function () {
+  if (typeof CARS === "undefined" || !document.getElementById("pick")) return;
+  var pickEl = document.getElementById("pick");
+  var q = document.createElement("input");
+  q.type = "search"; q.id = "q"; q.autocomplete = "off"; q.placeholder = "Search: Supra, Lambo, pope…";
+  pickEl.parentNode.insertBefore(q, pickEl);
+  var ABC = CARS.slice().sort(function (a, b) { return a.n.localeCompare(b.n); });
+  function fillPick() {
+    var s = (q.value || "").toLowerCase().trim();
+    var rows = ABC.filter(function (c) { return !s || (c.n + " " + c.m).toLowerCase().indexOf(s) >= 0; });
+    var head = s ? (rows.length ? rows.length + " match" + (rows.length > 1 ? "es" : "") + ", pick one…" : "No match. Try another word") : "Choose the car (A–Z)…";
+    pickEl.innerHTML = '<option value="">' + head + "</option>" + rows.map(function (c) { return '<option value="' + c.id + '">' + c.n + " (" + T[c.t].n + ")</option>"; }).join("");
+    if (s && rows.length === 1) pickEl.value = rows[0].id;
+    chk();
+  }
+  q.addEventListener("input", fillPick);
+  fillPick();
+  document.getElementById("submit").addEventListener("click", function () { setTimeout(function () { if (!pickEl.value) { q.value = ""; fillPick(); } }, 1500); });
+
+  var filters = document.getElementById("filters");
+  var gq = document.createElement("input");
+  gq.type = "search"; gq.id = "gq"; gq.autocomplete = "off"; gq.placeholder = "Search all " + CARS.length + " cars";
+  filters.parentNode.insertBefore(gq, filters);
+  var order = { O: 0, L: 1, E: 2, R: 3, C: 4 };
+  list = function () {
+    var s = (gq.value || "").toLowerCase().trim();
+    var rows = CARS.filter(function (c) { return filt === "all" || c.t === filt || (filt === "got" && caught.has(c.id)) || (filt === "need" && !caught.has(c.id)); })
+      .filter(function (c) { return !s || (c.n + " " + c.m).toLowerCase().indexOf(s) >= 0; })
+      .sort(function (a, b) { return order[a.t] - order[b.t] || a.n.localeCompare(b.n); });
+    document.getElementById("list").innerHTML = rows.map(function (c) { var g = caught.get(c.id); return '<div class="car' + (g ? "" : " no") + '"><div class="bar" style="background:' + T[c.t].c + '"></div><div><div class="nm">' + c.n + '</div><div class="sub">' + c.m + " · " + (g ? (+g.points).toLocaleString() + " pts earned" : T[c.t].p.toLocaleString() + " pts") + '</div></div><span class="tag" style="color:' + (g ? "var(--ok)" : T[c.t].c) + '">' + (g ? "CAUGHT" : T[c.t].n.toUpperCase()) + "</span></div>"; }).join("") + '<p class="note">' + CARS.length + " cars on the launch list. New drops added every month.</p>";
+  };
+  gq.addEventListener("input", function () { list(); });
+  if (typeof me !== "undefined" && me) list();
+})();
