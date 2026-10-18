@@ -93,5 +93,7 @@
     document.getElementById("list").innerHTML = rows.map(function (c) { var g = caught.get(c.id); return '<div class="car' + (g ? "" : " no") + '"><div class="bar" style="background:' + T[c.t].c + '"></div><div><div class="nm">' + c.n + '</div><div class="sub">' + c.m + " · " + (g ? (+g.points).toLocaleString() + " pts earned" : T[c.t].p.toLocaleString() + " pts") + '</div></div><span class="tag" style="color:' + (g ? "var(--ok)" : T[c.t].c) + '">' + (g ? "CAUGHT" : T[c.t].n.toUpperCase()) + "</span></div>"; }).join("") + '<p class="note">' + CARS.length + " cars on the launch list. New drops added every month.</p>";
   };
   gq.addEventListener("input", function () { list(); });
+  var find = new URLSearchParams(location.search).get("find");
+  if (find) gq.value = find;
   if (typeof me !== "undefined" && me) render();
 })();
