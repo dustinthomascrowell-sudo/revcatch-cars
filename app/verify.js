@@ -50,6 +50,16 @@
   }, true);
 })();
 
+/* Hometown Legends: real local builds, top value. Ids continue after the main list. */
+(function () {
+  if (typeof CARS === "undefined") return;
+  [["O", "Dirty Datsun (Anthony Palladino)", "Hometown Legend"],
+   ["O", "Texaco Camaro (Jason Bottenfield)", "Hometown Legend"]].forEach(function (x) {
+    if (!CARS.some(function (c) { return c.n === x[1]; })) CARS.push({ id: CARS.length, t: x[0], n: x[1], m: x[2] });
+  });
+  gauge = function () { var c = document.getElementById("gauge"), x = c.getContext("2d"), cs = getComputedStyle(document.documentElement), N = CARS.length; x.clearRect(0, 0, 260, 260); var a0 = Math.PI * .75, span = Math.PI * 1.5, f = caught.size / N; x.lineWidth = 18; x.lineCap = "round"; x.strokeStyle = cs.getPropertyValue("--line"); x.beginPath(); x.arc(130, 130, 105, a0, a0 + span); x.stroke(); x.strokeStyle = cs.getPropertyValue("--accent"); x.beginPath(); x.arc(130, 130, 105, a0, a0 + span * Math.max(f, .01)); x.stroke(); x.fillStyle = cs.getPropertyValue("--fg"); x.textAlign = "center"; x.font = "700 54px Chakra Petch, sans-serif"; x.fillText(caught.size, 130, 140); x.fillStyle = cs.getPropertyValue("--mute"); x.font = "500 20px IBM Plex Mono, monospace"; x.fillText("OF " + N, 130, 172); };
+})();
+
 /* Search + A-Z: car picker and garage list */
 (function () {
   if (typeof CARS === "undefined" || !document.getElementById("pick")) return;
@@ -83,5 +93,5 @@
     document.getElementById("list").innerHTML = rows.map(function (c) { var g = caught.get(c.id); return '<div class="car' + (g ? "" : " no") + '"><div class="bar" style="background:' + T[c.t].c + '"></div><div><div class="nm">' + c.n + '</div><div class="sub">' + c.m + " · " + (g ? (+g.points).toLocaleString() + " pts earned" : T[c.t].p.toLocaleString() + " pts") + '</div></div><span class="tag" style="color:' + (g ? "var(--ok)" : T[c.t].c) + '">' + (g ? "CAUGHT" : T[c.t].n.toUpperCase()) + "</span></div>"; }).join("") + '<p class="note">' + CARS.length + " cars on the launch list. New drops added every month.</p>";
   };
   gq.addEventListener("input", function () { list(); });
-  if (typeof me !== "undefined" && me) list();
+  if (typeof me !== "undefined" && me) render();
 })();
