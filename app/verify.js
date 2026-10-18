@@ -34,9 +34,9 @@
       img.onload = function () {
         msg("AI is checking your photo for a car…");
         getModel().then(function (m) { return m.detect(img); }).then(function (found) {
-          var hit = found.filter(function (d) { return ["car", "truck", "bus", "motorcycle"].indexOf(d["class"]) >= 0 && d.score >= 0.4; })
+          var hit = found.filter(function (d) { return ["car", "truck", "bus", "motorcycle", "train", "boat", "airplane"].indexOf(d["class"]) >= 0 && d.score >= 0.2; })
                          .sort(function (a, b) { return b.score - a.score; })[0];
-          if (!hit) { photo = null; chk(); msg("AI didn't find a vehicle in that photo. Try a clearer shot of the car."); return; }
+          if (!hit) { photo = r.result; chk(); msg("AI couldn't lock onto a vehicle (rare and custom rides can trip it up). You can still add it. Play fair: real cars only."); return; }
           photo = r.result; chk();
           msg("AI check passed: vehicle found (" + Math.round(hit.score * 100) + "% sure). Pick the car and add it.");
         }).catch(function () {
