@@ -57,6 +57,10 @@
    ["O", "Texaco Camaro (Jason Bottenfield)", "Hometown Legend"]].forEach(function (x) {
     if (!CARS.some(function (c) { return c.n === x[1]; })) CARS.push({ id: CARS.length, t: x[0], n: x[1], m: x[2] });
   });
+  window.RC_INFO = {
+    "Dirty Datsun (Anthony Palladino)": { d: "1969 Datsun roadster on a custom chassis, LS V8 power. Optima Ultimate Street Car Outlaw class champ.", u: "https://lsxmag.com/features/the-dirty-datsun/" },
+    "Texaco Camaro (Jason Bottenfield)": { d: "1969 Camaro RS in Texaco livery, supercharged LT5, 760 whp. Optima GTV national champ.", u: "https://lsxmag.com/features/domination-by-design-the-3000-hour-build-texaco-camaro-rs/" }
+  };
   gauge = function () { var c = document.getElementById("gauge"), x = c.getContext("2d"), cs = getComputedStyle(document.documentElement), N = CARS.length; x.clearRect(0, 0, 260, 260); var a0 = Math.PI * .75, span = Math.PI * 1.5, f = caught.size / N; x.lineWidth = 18; x.lineCap = "round"; x.strokeStyle = cs.getPropertyValue("--line"); x.beginPath(); x.arc(130, 130, 105, a0, a0 + span); x.stroke(); x.strokeStyle = cs.getPropertyValue("--accent"); x.beginPath(); x.arc(130, 130, 105, a0, a0 + span * Math.max(f, .01)); x.stroke(); x.fillStyle = cs.getPropertyValue("--fg"); x.textAlign = "center"; x.font = "700 54px Chakra Petch, sans-serif"; x.fillText(caught.size, 130, 140); x.fillStyle = cs.getPropertyValue("--mute"); x.font = "500 20px IBM Plex Mono, monospace"; x.fillText("OF " + N, 130, 172); };
 })();
 
@@ -90,7 +94,7 @@
     var rows = CARS.filter(function (c) { return filt === "all" || c.t === filt || (filt === "got" && caught.has(c.id)) || (filt === "need" && !caught.has(c.id)); })
       .filter(function (c) { return !s || (c.n + " " + c.m).toLowerCase().indexOf(s) >= 0; })
       .sort(function (a, b) { return order[a.t] - order[b.t] || a.n.localeCompare(b.n); });
-    document.getElementById("list").innerHTML = rows.map(function (c) { var g = caught.get(c.id); return '<div class="car' + (g ? "" : " no") + '"><div class="bar" style="background:' + T[c.t].c + '"></div><div><div class="nm">' + c.n + '</div><div class="sub">' + c.m + " · " + (g ? (+g.points).toLocaleString() + " pts earned" : T[c.t].p.toLocaleString() + " pts") + '</div></div><span class="tag" style="color:' + (g ? "var(--ok)" : T[c.t].c) + '">' + (g ? "CAUGHT" : T[c.t].n.toUpperCase()) + "</span></div>"; }).join("") + '<p class="note">' + CARS.length + " cars on the launch list. New drops added every month.</p>";
+    document.getElementById("list").innerHTML = rows.map(function (c) { var g = caught.get(c.id); return '<div class="car' + (g ? "" : " no") + '"><div class="bar" style="background:' + T[c.t].c + '"></div><div><div class="nm">' + c.n + '</div><div class="sub">' + c.m + " · " + (g ? (+g.points).toLocaleString() + " pts earned" : T[c.t].p.toLocaleString() + " pts") + '</div>' + (window.RC_INFO && RC_INFO[c.n] ? '<div class="sub" style="margin-top:4px">' + RC_INFO[c.n].d + ' <a href="' + RC_INFO[c.n].u + '" target="_blank" rel="noopener" style="color:var(--accent)">See photos ↗</a></div>' : "") + '</div><span class="tag" style="color:' + (g ? "var(--ok)" : T[c.t].c) + '">' + (g ? "CAUGHT" : T[c.t].n.toUpperCase()) + "</span></div>"; }).join("") + '<p class="note">' + CARS.length + " cars on the launch list. New drops added every month.</p>";
   };
   gq.addEventListener("input", function () { list(); });
   var find = new URLSearchParams(location.search).get("find");
