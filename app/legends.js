@@ -3,14 +3,14 @@
   var st = document.createElement("style");
   st.textContent = "input,select,textarea{font-size:16px!important}" +
     ".lg-card{display:grid;grid-template-columns:4px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}" +
-    ".lg-card img{width:100%;border-radius:10px;display:block;margin:8px 0;aspect-ratio:16/9;object-fit:cover;background:var(--panel)}" +
+    ".lg-gal{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x mandatory;margin:8px 0}.lg-gal img{flex:0 0 88%;width:88%;border-radius:10px;aspect-ratio:16/10;object-fit:cover;scroll-snap-align:start;background:#fff}" +
     ".lg-card details{margin-top:6px}.lg-card summary{cursor:pointer;color:var(--accent);font-size:13px;font-weight:600}" +
-    ".lg-card ul{margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.5;color:var(--fg)}";
+    ".lg-card ul{margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.5;color:var(--fg)}.lg-card .ai{font-size:11px;color:var(--mute)}";
   document.head.appendChild(st);
   var vp = document.querySelector('meta[name=viewport]');
   if (vp) vp.setAttribute("content", "width=device-width,initial-scale=1,viewport-fit=cover");
   if (typeof CARS === "undefined") return;
-  var IMG = window.RC_LEGEND_IMG || {};
+  var IMG = window.RC_LEGEND_IMG = window.RC_LEGEND_IMG || {};
   var SPEC = {
     "Dirty Datsun (Anthony Palladino)": [
       "1969 Datsun Sport 2000 roadster body on a custom tube chassis with integrated cage (C5 Corvette running gear)",
@@ -47,9 +47,9 @@
       d.innerHTML = '<div class="bar" style="background:' + T[c.t].c + ';height:auto;border-radius:2px"></div><div>' +
         '<div class="rw"><div class="nm" style="font-weight:600">' + n + '</div><span class="tag" style="color:' + (g ? "var(--ok)" : T[c.t].c) + '">' + (g ? "CAUGHT" : "ONE-OF-ONE") + '</span></div>' +
         '<div class="sub">Hometown Legend · 10,000 pts</div>' +
-        (IMG[n] ? '<img alt="' + n + '" src="' + IMG[n] + '">' : "") +
+        (IMG[n] ? '<div class="lg-gal">' + [].concat(IMG[n]).map(function (u, i) { return '<img loading="lazy" alt="' + n + ' photo ' + (i + 1) + '" src="' + u + '">'; }).join("") + '</div><div class="ai">Swipe for more. Spot the real one to catch it.</div>' : "") +
         '<details><summary>Specs &amp; wins</summary><ul>' + sp.map(function (s) { return "<li>" + s + "</li>"; }).join("") + '</ul>' +
-        (info.u ? '<p class="sub" style="margin:8px 0 0"><a href="' + info.u + '" target="_blank" rel="noopener" style="color:var(--accent)">More photos (LSX Magazine) ↗</a></p>' : "") + '</details></div>';
+        (info.u ? '<p class="sub" style="margin:8px 0 0"><a href="' + info.u + '" target="_blank" rel="noopener" style="color:var(--accent)">Real photos (LSX Magazine) ↗</a></p>' : "") + '</details></div>';
       row.replaceWith(d);
     });
   };
