@@ -101,3 +101,6 @@
   if (find) gq.value = find;
   if (typeof me !== "undefined" && me) render();
 })();
+
+/* Load images + legend cards */
+(function () { var a = document.createElement("script"); a.src = "/app/legend-img.js?v=1"; a.onload = a.onerror = function () { var b = document.createElement("script"); b.src = "/app/legends.js?v=1"; document.body.appendChild(b); }; document.body.appendChild(a); })();
